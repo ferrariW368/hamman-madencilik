@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#15120F">
+<title>Hamman Madencilik — Yeraltı Kaynakları, Küresel Ölçek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15120F;
+    --bg-alt:#191510;
+    --panel:#1D1815;
+    --panel-raised:#251F1A;
+    --line:#332B24;
+    --line-soft:#241F1A;
+    --bone:#ECE6DB;
+    --bone-dim:#C9C0B2;
+    --ash:#948A7E;
+    --ochre:#C68A3D;
+    --ochre-bright:#E3A85C;
+    --ochre-soft:rgba(198,138,61,0.14);
+    --verdigris:#4F9C90;
+    --verdigris-soft:rgba(79,156,144,0.14);
+    --red:#A3312E;
+    --depth:0;
+    --font-display:'Big Shoulders Display', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--bone);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.55;
+    overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+    overscroll-behavior-y:none;
+  }
+  button, a, input, textarea{-webkit-touch-callout:none;}
+  ::selection{background:var(--ochre); color:#15120F;}
+  a{color:inherit;}
+  button{font-family:inherit;}
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--verdigris);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0 0 14px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px;
+    height:1px;
+    background:var(--verdigris);
+    display:inline-block;
+  }
+
+  h1,h2,h3{
+    font-family:var(--font-display);
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    margin:0;
+    color:var(--bone);
+  }
+
+  .wrap{max-width:1200px; margin:0 auto; padding:0 32px;}
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease;}
+  .reveal.is-visible{opacity:1; transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 32px;
+    background:rgba(21,18,15,0.72);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav-mark{display:flex; flex-direction:column; line-height:1;}
+  .nav-mark strong{
+    font-family:var(--font-display); font-weight:900; font-size:20px;
+    letter-spacing:0.06em; color:var(--bone);
+  }
+  .nav-mark span{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.16em;
+    color:var(--ash); text-transform:uppercase; margin-top:2px;
+  }
+  .nav-links{display:flex; gap:28px; overflow-x:auto;}
+  .nav-links a{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em;
+    text-transform:uppercase; text-decoration:none; color:var(--bone-dim);
+    white-space:nowrap; padding:4px 2px; border-bottom:1px solid transparent;
+    transition:color .2s, border-color .2s;
+  }
+  .nav-links a:focus-visible{color:var(--ochre-bright); border-color:var(--ochre);}
+  @media (hover:hover) and (pointer:fine){
+    .nav-links a:hover{color:var(--ochre-bright); border-color:var(--ochre);}
+  }
+
+  /* ---------- hero ---------- */
+  #hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:120px 0 60px;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:64px 64px;
+    background-position:center;
+    overflow:hidden;
+  }
+  #hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse at 65% 50%, rgba(21,18,15,0) 0%, var(--bg) 78%);
+    pointer-events:none;
+  }
+  .hero-grid{
+    position:relative; z-index:2;
+    width:100%; max-width:1200px; margin:0 auto; padding:0 32px;
+    display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:24px;
+  }
+  .hero-copy{max-width:480px;}
+  .hero-copy h1{
+    font-size:clamp(40px, 5.6vw, 68px);
+    line-height:0.98;
+    margin-bottom:22px;
+  }
+  .hero-copy h1 em{
+    font-style:normal;
+    color:var(--ochre-bright);
+  }
+  .hero-copy p{
+    color:var(--bone-dim);
+    font-size:16px;
+    max-width:420px;
+    margin:0 0 30px;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.1em;
+    text-transform:uppercase; text-decoration:none;
+    padding:14px 22px; border:1px solid var(--ochre); color:var(--bone);
+    background:var(--ochre-soft); cursor:pointer;
+    transition:background .2s, transform .2s;
+  }
+  .btn:focus-visible{background:var(--ochre); color:#15120F;}
+  .btn:active{transform:scale(0.98); background:var(--ochre); color:#15120F;}
+  @media (hover:hover) and (pointer:fine){
+    .btn:hover{background:var(--ochre); color:#15120F;}
+  }
+
+  .globe-stage{
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    height:min(560px, 72vw);
+  }
+  #globe-wrap{
+    position:relative;
+    width:min(520px, 68vw);
+    height:min(520px, 68vw);
+    cursor:grab;
+    touch-action:none;
+  }
+  #globe-wrap:active{cursor:grabbing;}
+  #globe-canvas{display:block; width:100%; height:100%;}
+  .drag-hint{
+    position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--ash);
+    display:flex; align-items:center; gap:8px;
+    pointer-events:none;
+  }
+  .drag-hint .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--verdigris);
+    animation:pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{0%,100%{opacity:0.3;} 50%{opacity:1;}}
+
+  /* ---------- site detail panel ---------- */
+  #site-panel{
+    position:absolute; top:0; right:0; height:100%;
+    width:min(340px, 88vw);
+    background:var(--panel-raised);
+    border-left:1px solid var(--line);
+    padding:88px 26px 26px;
+    transform:translateX(100%);
+    transition:transform .4s ease;
+    z-index:5;
+  }
+  #site-panel.is-open{transform:translateX(0);}
+  #panel-close{
+    position:absolute; top:24px; right:22px;
+    background:none; border:1px solid var(--line); color:var(--ash);
+    width:30px; height:30px; cursor:pointer; font-size:16px; line-height:1;
+  }
+  #panel-close:focus-visible{color:var(--ochre-bright); border-color:var(--ochre);}
+  @media (hover:hover) and (pointer:fine){
+    #panel-close:hover{color:var(--ochre-bright); border-color:var(--ochre);}
+  }
+  .panel-code{
+    font-family:var(--font-mono); color:var(--ochre-bright); font-size:13px;
+    letter-spacing:0.06em; margin-bottom:6px;
+  }
+  #panel-city{font-family:var(--font-display); font-size:26px; text-transform:uppercase; margin-bottom:18px;}
+  .panel-row{
+    display:flex; justify-content:space-between; padding:10px 0;
+    border-top:1px solid var(--line-soft);
+    font-family:var(--font-mono); font-size:12.5px;
+  }
+  .panel-row span:first-child{color:var(--ash); text-transform:uppercase; letter-spacing:0.06em;}
+  #panel-note{margin-top:18px; color:var(--bone-dim); font-size:14px; font-family:var(--font-body);}
+
+  /* ---------- sections shared ---------- */
+  section{padding:110px 0;}
+  .section-head{max-width:600px; margin-bottom:56px;}
+  .section-head h2{font-size:clamp(30px, 3.4vw, 44px); margin-bottom:14px;}
+  .section-head p{color:var(--bone-dim); margin:0;}
+
+  #faaliyetler{background:var(--bg-alt); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);}
+
+  .site-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:1px; background:var(--line-soft); border:1px solid var(--line-soft);
+  }
+  .site-card{
+    text-align:left; background:var(--bg-alt); border:none; color:var(--bone);
+    padding:24px 22px; cursor:pointer; display:flex; flex-direction:column; gap:8px;
+    transition:background .2s;
+  }
+  .site-card:focus-visible, .site-card.is-active{background:var(--panel-raised);}
+  @media (hover:hover) and (pointer:fine){
+    .site-card:hover{background:var(--panel-raised);}
+  }
+  .site-card.is-active{box-shadow:inset 3px 0 0 var(--ochre);}
+  .site-card .code{font-family:var(--font-mono); font-size:11px; color:var(--ochre-bright); letter-spacing:0.08em;}
+  .site-card .city{font-family:var(--font-display); font-size:20px; text-transform:uppercase;}
+  .site-card .meta{font-family:var(--font-mono); font-size:11.5px; color:var(--ash); display:flex; justify-content:space-between;}
+  .site-card .status{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--verdigris);}
+
+  /* ---------- capabilities ---------- */
+  .mineral-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:1px;
+    background:var(--line-soft); border:1px solid var(--line-soft);
+  }
+  .mineral-card{background:var(--bg); padding:22px; display:flex; flex-direction:column; gap:14px;}
+  .mineral-swatch{width:100%; height:46px; border:1px solid rgba(255,255,255,0.06);}
+  .mineral-card .name{font-family:var(--font-display); font-size:18px; text-transform:uppercase;}
+  .mineral-card .note{font-family:var(--font-mono); font-size:11px; color:var(--ash); line-height:1.5;}
+
+  /* ---------- reach readout ---------- */
+  #kapsam{background:var(--panel); border-bottom:1px solid var(--line-soft);}
+  .readout{
+    display:grid; grid-template-columns:repeat(4, 1fr);
+    border-top:1px solid var(--line); border-left:1px solid var(--line);
+  }
+  .readout div{
+    border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:30px 24px;
+  }
+  .readout .num{font-family:var(--font-display); font-size:clamp(34px,4vw,52px); color:var(--ochre-bright); line-height:1;}
+  .readout .label{font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ash); margin-top:10px;}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:60px; align-items:start;}
+  .about-grid p{color:var(--bone-dim); margin:0 0 16px;}
+  .about-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0;}
+  .about-list li{
+    padding:18px 0; border-top:1px solid var(--line-soft);
+    display:flex; justify-content:space-between; gap:20px;
+    font-family:var(--font-mono); font-size:12.5px;
+  }
+  .about-list li:last-child{border-bottom:1px solid var(--line-soft);}
+  .about-list span:first-child{color:var(--ash); text-transform:uppercase; letter-spacing:0.06em;}
+
+  /* ---------- contact ---------- */
+  #iletisim{background:var(--bg-alt); border-top:1px solid var(--line-soft);}
+  .contact-grid{display:grid; grid-template-columns:0.8fr 1.2fr; gap:60px;}
+  .contact-info dl{margin:0;}
+  .contact-info dt{font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ash); margin-top:22px;}
+  .contact-info dd{margin:6px 0 0; font-family:var(--font-display); font-size:19px; text-transform:none; letter-spacing:0.01em;}
+  .contact-info dd:first-of-type{margin-top:6px;}
+
+  form{display:flex; flex-direction:column; gap:16px;}
+  .field{display:flex; flex-direction:column; gap:8px;}
+  .field label{font-family:var(--font-mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ash);}
+  .field input, .field textarea{
+    background:var(--panel); border:1px solid var(--line); color:var(--bone);
+    padding:13px 14px; font-family:var(--font-body); font-size:14px; resize:vertical;
+  }
+  .field input:focus-visible, .field textarea:focus-visible{outline:2px solid var(--ochre); outline-offset:2px;}
+  .form-note{font-family:var(--font-mono); font-size:11px; color:var(--ash); margin-top:4px;}
+
+  /* ---------- footer ---------- */
+  footer{padding:36px 0; border-top:1px solid var(--line-soft);}
+  .foot-grid{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;}
+  .foot-grid p{margin:0; font-family:var(--font-mono); font-size:11px; color:var(--ash);}
+
+  /* ---------- ticker ---------- */
+  .ticker{
+    overflow:hidden; border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
+    background:var(--panel); padding:12px 0;
+  }
+  .ticker-track{
+    display:flex; gap:40px; white-space:nowrap;
+    font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.08em;
+    color:var(--ash); text-transform:uppercase;
+    animation:ticker-scroll 34s linear infinite;
+    width:max-content;
+  }
+  .ticker-track span{color:var(--verdigris);}
+  @keyframes ticker-scroll{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+
+  /* ---------- depth descent system ---------- */
+  /* --depth is a 0→1 value set from JS on scroll (rAF-throttled, passive).
+     Everything below reacts to it with pure CSS — no per-frame JS style writes. */
+  #depth-veil{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 38%, rgba(198,138,61, calc(0.05 + var(--depth) * 0.05)) 0%, rgba(21,18,15,0) 62%),
+      radial-gradient(ellipse 120% 90% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0, calc(var(--depth) * 0.4)) 100%);
+    transition:background .15s linear;
+  }
+  #depth-gauge{
+    position:fixed; right:26px; top:50%; z-index:40;
+    transform:translateY(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    pointer-events:none;
+  }
+  #depth-gauge .line{
+    position:relative; width:1px; height:140px;
+    background:linear-gradient(var(--line-soft), var(--ochre));
+  }
+  #depth-gauge .line::after{
+    content:""; position:absolute; left:50%; top:0; width:7px; height:7px;
+    background:var(--ochre-bright); border-radius:50%;
+    box-shadow:0 0 10px 1px var(--ochre-bright);
+    transform:translate(-50%, calc(var(--depth) * 133px));
+  }
+  #depth-gauge .value{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.1em;
+    color:var(--ash); writing-mode:vertical-rl; text-orientation:mixed;
+  }
+  #depth-gauge .value strong{color:var(--ochre-bright); font-weight:500;}
+
+  #depth-bar-mobile{display:none;}
+
+  /* ---------- origin mark ---------- */
+  .origin-mark{display:flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ash);}
+  .origin-mark .dots{display:flex; gap:3px;}
+  .origin-mark .dot{width:6px; height:6px; border-radius:50%;}
+  .origin-mark .dot.r{background:var(--red);}
+  .origin-mark .dot.w{background:var(--bone);}
+  .origin-mark .dot.t{background:var(--verdigris);}
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 860px){
+    .hero-grid{grid-template-columns:1fr; text-align:left;}
+    .globe-stage{order:-1; height:min(420px, 84vw); margin-bottom:8px;}
+    .about-grid, .contact-grid{grid-template-columns:1fr; gap:36px;}
+    .readout{grid-template-columns:repeat(2,1fr);}
+    #site-panel{
+      top:auto; bottom:0; left:0; right:0; width:100%; height:auto; max-height:76vh;
+      transform:translateY(100%); border-left:none; border-top:1px solid var(--line);
+      overflow-y:auto;
+    }
+    #site-panel.is-open{transform:translateY(0);}
+    .nav-links{gap:18px;}
+
+    /* depth gauge doesn't fit next to content on narrow screens —
+       becomes a thin progress bar pinned under the notch/status bar instead */
+    #depth-gauge{display:none;}
+    #depth-bar-mobile{
+      display:block; position:fixed; left:0; right:0; z-index:60;
+      top:env(safe-area-inset-top, 0px);
+      height:2px; background:var(--line-soft);
+    }
+    #depth-bar-mobile::after{
+      content:""; display:block; height:100%; background:var(--ochre-bright);
+      width:calc(var(--depth) * 100%);
+    }
+  }
+
+  /* iOS notch / dynamic island: keep the nav clear of the status bar */
+  .nav{padding-top:max(18px, env(safe-area-inset-top)); padding-left:max(32px, env(safe-area-inset-left)); padding-right:max(32px, env(safe-area-inset-right));}
+</style>
+</head>
+<body>
+
+<div id="depth-veil" aria-hidden="true"></div>
+<div id="depth-bar-mobile" aria-hidden="true"></div>
+<div id="depth-gauge" aria-hidden="true">
+  <span class="value">YÜZEY</span>
+  <div class="line"></div>
+  <span class="value"><strong id="depth-num">0</strong> M</span>
+</div>
+
+<nav class="nav">
+  <div class="nav-mark">
+    <strong>HAMMAN</strong>
+    <span>Madencilik A.Ş.</span>
+  </div>
+  <div class="nav-links">
+    <a href="#faaliyetler">Faaliyetler</a>
+    <a href="#kaynaklar">Kaynaklar</a>
+    <a href="#kurumsal">Kurumsal</a>
+    <a href="#iletisim">İletişim</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="hero-grid">
+    <div class="hero-copy reveal is-visible">
+      <p class="eyebrow">Kuruluş 1985 — Türkiye Merkezli</p>
+      <h1>Yerin altında,<br>dünyanın <em>her yerinde.</em></h1>
+      <p>Beş kıtada yürüttüğümüz yeraltı kaynak operasyonlarını keşfedin. Küreyi sürükleyin — her nokta aktif bir sahayı temsil eder.</p>
+      <a href="#faaliyetler" class="btn">Faaliyet Alanlarını Görüntüle</a>
+    </div>
+    <div class="globe-stage reveal is-visible">
+      <div id="globe-wrap">
+        <canvas id="globe-canvas"></canvas>
+        <div class="drag-hint"><span class="dot"></span>Sürükle · Döndür</div>
+      </div>
+      <div id="site-panel">
+        <button id="panel-close" aria-label="Paneli kapat">✕</button>
+        <div class="panel-code" id="panel-code">—</div>
+        <div id="panel-city">Saha seçin</div>
+        <div class="panel-row"><span>Kaynak</span><span id="panel-resource">—</span></div>
+        <div class="panel-row"><span>Derinlik</span><span id="panel-depth">—</span></div>
+        <div class="panel-row"><span>Durum</span><span id="panel-status">—</span></div>
+        <p id="panel-note"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="ticker-track"></div>
+</div>
+
+<section id="faaliyetler">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Saha Kayıtları</p>
+      <h2>Faaliyet Alanları</h2>
+      <p>Sahalardan birine tıklayarak yukarıdaki küre üzerinde konumunu görüntüleyin.</p>
+    </div>
+    <div class="site-grid reveal" id="ops-list"></div>
+  </div>
+</section>
+
+<section id="kaynaklar">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Çıkarılan Kaynaklar</p>
+      <h2>Yeraltı Kaynakları</h2>
+      <p>Her saha, o bölgenin jeolojik yapısına özgü bir kaynak grubuna odaklanıyor.</p>
+    </div>
+    <div class="mineral-grid reveal" id="mineral-list"></div>
+  </div>
+</section>
+
+<section id="kapsam">
+  <div class="wrap">
+    <p class="eyebrow reveal">Kapsam</p>
+    <div class="readout reveal">
+      <div><div class="num" id="stat-countries">—</div><div class="label">Ülke</div></div>
+      <div><div class="num" id="stat-continents">—</div><div class="label">Kıta</div></div>
+      <div><div class="num" id="stat-sites">—</div><div class="label">Aktif Saha</div></div>
+      <div><div class="num">40+</div><div class="label">Yıllık Deneyim</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="kurumsal">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="reveal">
+        <p class="eyebrow">Kurumsal</p>
+        <h2 style="font-size:clamp(28px,3.2vw,38px); margin-bottom:18px;">Hakkımızda</h2>
+        <p>Hamman Madencilik, 1985'ten bu yana yeraltı kaynaklarının sorumlu ve verimli şekilde çıkarılması üzerine çalışıyor.</p>
+        <p>Türkiye merkezli mühendislik ekibimiz, beş kıtada yerel ortaklarla birlikte uzun vadeli saha operasyonları yürütüyor. Her saha, bölgenin jeolojik yapısına ve topluluklarına özgü bir yaklaşımla planlanıyor.</p>
+      </div>
+      <ul class="about-list reveal">
+        <li><span>Merkez</span><span>İstanbul, Türkiye</span></li>
+        <li><span>Faaliyet alanı</span><span>Yeraltı kaynak çıkarımı</span></li>
+        <li><span>Operasyon modeli</span><span>Doğrudan işletme + yerel ortaklık</span></li>
+        <li><span>Çalışan sayısı</span><span>1.400+</span></li>
+        <li><span>Aktif saha</span><span id="about-sites">8</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="iletisim">
+  <div class="wrap">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <p class="eyebrow">İletişim</p>
+        <h2 style="font-size:clamp(28px,3.2vw,38px); margin-bottom:8px;">Bize Ulaşın</h2>
+        <dl>
+          <dt>E-posta</dt>
+          <dd>iletisim@hammanmadencilik.com</dd>
+          <dt>Telefon</dt>
+          <dd>+90 212 000 00 00</dd>
+          <dt>Merkez Ofis</dt>
+          <dd>Maslak, İstanbul</dd>
+        </dl>
+      </div>
+      <form class="reveal" onsubmit="event.preventDefault(); this.querySelector('.form-note').textContent='Bu bir demo formdur, gönderim yapılmadı.';">
+        <div class="field">
+          <label for="f-name">Ad Soyad</label>
+          <input id="f-name" type="text" placeholder="Adınız">
+        </div>
+        <div class="field">
+          <label for="f-email">E-posta</label>
+          <input id="f-email" type="email" placeholder="ornek@sirket.com">
+        </div>
+        <div class="field">
+          <label for="f-msg">Mesaj</label>
+          <textarea id="f-msg" rows="4" placeholder="Mesajınız"></textarea>
+        </div>
+        <button type="submit" class="btn" style="align-self:flex-start;">Gönder</button>
+        <p class="form-note">Ödeme veya satın alma işlemi bu site üzerinden yapılmaz.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-grid">
+    <p>© 2026 Hamman Madencilik A.Ş. Tüm hakları saklıdır.</p>
+    <div class="origin-mark">
+      <span class="dots"><span class="dot r"></span><span class="dot w"></span><span class="dot t"></span></span>
+      <span>Türkiye Menşeli Mühendislik</span>
+    </div>
+    <p>Bu sayfa bir konsept prototiptir — firma bilgileri ve saha verileri örnek (placeholder) içeriktir.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var sites = [
+    {id:"zonguldak", code:"TR-ZNG-04", city:"Zonguldak", country:"Türkiye", continent:"Asya", lat:41.45, lon:31.79, resource:"Taşkömürü", depth:"1.150 m", status:"Aktif", note:"Karadeniz kıyısında, 1962'den bu yana kesintisiz işletilen galeri sistemi."},
+    {id:"bingol", code:"TR-BNG-02", city:"Bingöl", country:"Türkiye", continent:"Asya", lat:38.88, lon:40.50, resource:"Bakır", depth:"640 m", status:"Aktif", note:"Doğu Anadolu'da orta ölçekli yeraltı bakır çıkarımı."},
+    {id:"atacama", code:"CL-ATC-01", city:"Atacama", country:"Şili", continent:"Güney Amerika", lat:-23.65, lon:-70.40, resource:"Lityum", depth:"310 m", status:"Aktif", note:"Güney Amerika'nın en kurak bölgesinde tuz düzlüğü lityum üretimi."},
+    {id:"pilbara", code:"AU-PLB-03", city:"Pilbara", country:"Avustralya", continent:"Okyanusya", lat:-22.70, lon:119.50, resource:"Demir Cevheri", depth:"480 m", status:"Aktif", note:"Batı Avustralya'da geniş ölçekli demir cevheri sahası."},
+    {id:"katanga", code:"CD-KTG-01", city:"Katanga", country:"D. Kongo", continent:"Afrika", lat:-10.70, lon:25.50, resource:"Kobalt", depth:"720 m", status:"Genişleme", note:"Orta Afrika'da genişleme aşamasında kobalt sahası."},
+    {id:"karaganda", code:"KZ-KRG-02", city:"Karaganda", country:"Kazakistan", continent:"Asya", lat:49.80, lon:73.10, resource:"Krom", depth:"890 m", status:"Aktif", note:"Orta Asya bozkırlarında krom çıkarımı."},
+    {id:"sudbury", code:"CA-ONT-01", city:"Sudbury", country:"Kanada", continent:"Kuzey Amerika", lat:46.50, lon:-81.00, resource:"Nikel", depth:"1.020 m", status:"Aktif", note:"Kanada Kalkanı'nda, yüz yılı aşkın maden geleneği olan bölgede nikel üretimi."},
+    {id:"nevada", code:"US-NVD-01", city:"Nevada", country:"ABD", continent:"Kuzey Amerika", lat:40.80, lon:-116.40, resource:"Altın", depth:"560 m", status:"Keşif", note:"Kuzey Amerika'da keşif aşamasındaki altın sahası."}
+  ];
+
+  var minerals = [
+    {name:"Taşkömürü", hex:"#221F1D", note:"Zonguldak sahasından"},
+    {name:"Bakır", hex:"#B5651D", note:"Bingöl sahasından"},
+    {name:"Lityum", hex:"#D8D2C4", note:"Atacama sahasından"},
+    {name:"Demir Cevheri", hex:"#8B3A2E", note:"Pilbara sahasından"},
+    {name:"Kobalt", hex:"#3B5B8C", note:"Katanga sahasından"},
+    {name:"Krom", hex:"#A9A9A9", note:"Karaganda sahasından"},
+    {name:"Nikel", hex:"#C9C0A8", note:"Sudbury sahasından"},
+    {name:"Altın", hex:"#D4AF37", note:"Nevada sahasından (keşif)"}
+  ];
+
+  /* ---- populate operations list ---- */
+  var opsList = document.getElementById("ops-list");
+  sites.forEach(function(s){
+    var card = document.createElement("button");
+    card.type = "button";
+    card.className = "site-card";
+    card.dataset.id = s.id;
+    card.innerHTML =
+      '<span class="code">' + s.code + '</span>' +
+      '<span class="city">' + s.city + '</span>' +
+      '<span class="meta"><span>' + s.country + '</span><span>' + s.resource + '</span></span>' +
+      '<span class="status">' + s.status + '</span>';
+    card.addEventListener("click", function(){
+      selectSite(s.id);
+      document.getElementById("hero").scrollIntoView({behavior:"smooth"});
+    });
+    opsList.appendChild(card);
+  });
+
+  /* ---- populate minerals ---- */
+  var mineralList = document.getElementById("mineral-list");
+  minerals.forEach(function(m){
+    var card = document.createElement("div");
+    card.className = "mineral-card";
+    card.innerHTML =
+      '<div class="mineral-swatch" style="background:' + m.hex + '"></div>' +
+      '<div class="name">' + m.name + '</div>' +
+      '<div class="note">' + m.note + '</div>';
+    mineralList.appendChild(card);
+  });
+
+  /* ---- stats ---- */
+  var countries = Array.from(new Set(sites.map(function(s){return s.country;})));
+  var continents = Array.from(new Set(sites.map(function(s){return s.continent;})));
+  document.getElementById("stat-countries").textContent = countries.length;
+  document.getElementById("stat-continents").textContent = continents.length;
+  document.getElementById("stat-sites").textContent = sites.length;
+
+  /* ---- ticker ---- */
+  var tickerItems = sites.map(function(s){
+    return s.lat.toFixed(2) + '°  ' + s.lon.toFixed(2) + '°  — <span>' + s.city.toUpperCase() + '</span>';
+  });
+  var tickerHtml = tickerItems.concat(tickerItems).map(function(t){return '<span>' + t + '</span>';}).join('');
+  document.getElementById("ticker-track").innerHTML = tickerHtml;
+
+  /* ---- depth descent: scroll position -> --depth (0..1) + meter readout ---- */
+  var DEPTH_MAX = 1150; // matches the deepest active site (Zonguldak)
+  var docEl = document.documentElement;
+  var depthNumEl = document.getElementById("depth-num");
+  var depthRaf = null;
+  function updateDepth(){
+    var scrollable = docEl.scrollHeight - window.innerHeight;
+    var progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+    docEl.style.setProperty("--depth", progress.toFixed(4));
+    if(depthNumEl) depthNumEl.textContent = Math.round(progress * DEPTH_MAX).toLocaleString("tr-TR");
+    depthRaf = null;
+  }
+  window.addEventListener("scroll", function(){
+    if(depthRaf === null) depthRaf = requestAnimationFrame(updateDepth);
+  }, {passive:true});
+  window.addEventListener("resize", updateDepth);
+  updateDepth();
+
+  /* ---- reveal on scroll ---- */
+  var revealEls = document.querySelectorAll(".reveal");
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add("is-visible"); io.unobserve(e.target); }
+    });
+  }, {threshold:0.15});
+  revealEls.forEach(function(el){ io.observe(el); });
+
+  /* ================= THREE.JS GLOBE ================= */
+  var canvas = document.getElementById("globe-canvas");
+  var wrapEl = document.getElementById("globe-wrap");
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0, 7.4);
+
+  var renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true, alpha: true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+  function fitRenderer(){
+    var w = wrapEl.clientWidth, h = wrapEl.clientHeight;
+    if(w === 0 || h === 0) return;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h, false);
+  }
+
+  var R = 2.2;
+  var globeGroup = new THREE.Group();
+  scene.add(globeGroup);
+
+  var coreGeo = new THREE.SphereGeometry(R, 48, 36);
+  var coreMat = new THREE.MeshBasicMaterial({color: 0x1D1815});
+  globeGroup.add(new THREE.Mesh(coreGeo, coreMat));
+
+  var gridGeo = new THREE.SphereGeometry(R * 1.003, 24, 18);
+  var gridMat = new THREE.MeshBasicMaterial({color: 0x4F9C90, wireframe: true, transparent: true, opacity: 0.18});
+  globeGroup.add(new THREE.Mesh(gridGeo, gridMat));
+
+  var rimGeo = new THREE.SphereGeometry(R * 1.05, 48, 36);
+  var rimMat = new THREE.MeshBasicMaterial({color: 0x4F9C90, transparent: true, opacity: 0.07, side: THREE.BackSide});
+  globeGroup.add(new THREE.Mesh(rimGeo, rimMat));
+
+  function latLonToVec3(lat, lon, radius){
+    var phi = (90 - lat) * (Math.PI / 180);
+    var theta = (lon + 180) * (Math.PI / 180);
+    return new THREE.Vector3(
+      -radius * Math.sin(phi) * Math.cos(theta),
+       radius * Math.cos(phi),
+       radius * Math.sin(phi) * Math.sin(theta)
+    );
+  }
+
+  var pinsGroup = new THREE.Group();
+  globeGroup.add(pinsGroup);
+  var pinMeshes = {};
+
+  sites.forEach(function(site){
+    var surface = latLonToVec3(site.lat, site.lon, R * 0.995);
+    var tip = latLonToVec3(site.lat, site.lon, R * 1.14);
+
+    var stemGeo = new THREE.BufferGeometry().setFromPoints([surface, tip]);
+    var stemMat = new THREE.LineBasicMaterial({color: 0xC68A3D, transparent: true, opacity: 0.55});
+    pinsGroup.add(new THREE.Line(stemGeo, stemMat));
+
+    var pinGeo = new THREE.SphereGeometry(0.055, 12, 12);
+    var pinMat = new THREE.MeshBasicMaterial({color: 0xC68A3D});
+    var pin = new THREE.Mesh(pinGeo, pinMat);
+    pin.position.copy(tip);
+    pin.userData.siteId = site.id;
+    pinsGroup.add(pin);
+    pinMeshes[site.id] = pin;
+  });
+
+  var rotY = 0.4, rotX = 0.2;
+  var isDragging = false, moved = false, downX = 0, downY = 0, prevX = 0, prevY = 0;
+  var autoRotate = !reduceMotion;
+  var resumeTimer = null;
+
+  function pointerX(e){ return (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX; }
+  function pointerY(e){ return (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY; }
+
+  function onDown(e){
+    isDragging = true; moved = false; autoRotate = false;
+    downX = prevX = pointerX(e); downY = prevY = pointerY(e);
+    if(resumeTimer) clearTimeout(resumeTimer);
+  }
+  function onMove(e){
+    if(!isDragging) return;
+    var x = pointerX(e), y = pointerY(e);
+    var dx = x - prevX, dy = y - prevY;
+    if(Math.abs(x - downX) > 4 || Math.abs(y - downY) > 4) moved = true;
+    rotY += dx * 0.006;
+    rotX += dy * 0.006;
+    rotX = Math.max(-1.05, Math.min(1.05, rotX));
+    prevX = x; prevY = y;
+  }
+  function onUp(e){
+    if(isDragging && !moved) handleClick(e);
+    isDragging = false;
+    if(!reduceMotion){
+      resumeTimer = setTimeout(function(){ autoRotate = true; }, 3200);
+    }
+  }
+
+  var raycaster = new THREE.Raycaster();
+  var mouseVec = new THREE.Vector2();
+  function handleClick(e){
+    var rect = canvas.getBoundingClientRect();
+    var x = pointerX(e), y = pointerY(e);
+    mouseVec.x = ((x - rect.left) / rect.width) * 2 - 1;
+    mouseVec.y = -((y - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(mouseVec, camera);
+    var hits = raycaster.intersectObjects(pinsGroup.children.filter(function(c){return c.type === "Mesh";}));
+    if(hits.length > 0){
+      var id = hits[0].object.userData.siteId;
+      if(id) selectSite(id);
+    }
+  }
+
+  wrapEl.addEventListener("pointerdown", onDown);
+  window.addEventListener("pointermove", onMove);
+  window.addEventListener("pointerup", onUp);
+  wrapEl.addEventListener("touchstart", onDown, {passive:true});
+  window.addEventListener("touchmove", onMove, {passive:true});
+  window.addEventListener("touchend", onUp);
+
+  var activeSiteId = null;
+  window.selectSite = function(id){
+    var site = sites.filter(function(s){return s.id === id;})[0];
+    if(!site) return;
+    activeSiteId = id;
+
+    document.getElementById("site-panel").classList.add("is-open");
+    document.getElementById("panel-code").textContent = site.code;
+    document.getElementById("panel-city").textContent = site.city + ", " + site.country;
+    document.getElementById("panel-resource").textContent = site.resource;
+    document.getElementById("panel-depth").textContent = site.depth;
+    document.getElementById("panel-status").textContent = site.status;
+    document.getElementById("panel-note").textContent = site.note;
+
+    document.querySelectorAll(".site-card").forEach(function(c){
+      c.classList.toggle("is-active", c.dataset.id === id);
+    });
+  };
+
+  document.getElementById("panel-close").addEventListener("click", function(){
+    document.getElementById("site-panel").classList.remove("is-open");
+    activeSiteId = null;
+    document.querySelectorAll(".site-card").forEach(function(c){ c.classList.remove("is-active"); });
+  });
+
+  var clock = 0;
+  function animate(){
+    requestAnimationFrame(animate);
+    clock += 0.016;
+    if(autoRotate) rotY += 0.0016;
+    globeGroup.rotation.y = rotY;
+    globeGroup.rotation.x = rotX;
+
+    Object.keys(pinMeshes).forEach(function(id){
+      var mesh = pinMeshes[id];
+      var active = id === activeSiteId;
+      var scale = active ? (1.7 + Math.sin(clock * 4) * 0.25) : 1;
+      mesh.scale.setScalar(scale);
+      mesh.material.color.setHex(active ? 0xE3A85C : 0xC68A3D);
+    });
+
+    renderer.render(scene, camera);
+  }
+
+  fitRenderer();
+  animate();
+  window.addEventListener("resize", fitRenderer);
+  if(window.ResizeObserver){
+    new ResizeObserver(fitRenderer).observe(wrapEl);
+  }
+})();
+</script>
+</body>
+</html>
