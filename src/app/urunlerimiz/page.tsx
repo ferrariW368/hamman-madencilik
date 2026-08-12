@@ -1,5 +1,7 @@
 import { getUrunler } from "@/sanity/queries";
 
+export const revalidate = 60;
+
 export const metadata = {
   title: "Ürünlerimiz — Hamman Madencilik",
 };
