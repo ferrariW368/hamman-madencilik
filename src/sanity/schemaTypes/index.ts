@@ -5,7 +5,8 @@ import { sirketBilgisi } from "./sirketBilgisi";
 import { iletisimBilgisi } from "./iletisimBilgisi";
 import { galeriGorseli } from "./galeriGorseli";
 import { sahaTesis } from "./sahaTesis";
+import { mesaj } from "./mesaj";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [hizmet, urunKategorisi, sirketBilgisi, iletisimBilgisi, galeriGorseli, sahaTesis],
+  types: [hizmet, urunKategorisi, sirketBilgisi, iletisimBilgisi, galeriGorseli, sahaTesis, mesaj],
 };
