@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-stone-cream: #FBFAF7;
+  --color-stone-ivory: #F5F2EC;
+  --color-stone-sand: #E8E2D6;
+  --color-stone-ink: #2b2620;
+  --color-stone-bronze: #8a6f3a;
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", Arial, sans-serif;
+}
+
+body {
+  background-color: var(--color-stone-cream);
+  color: var(--color-stone-ink);
+}
