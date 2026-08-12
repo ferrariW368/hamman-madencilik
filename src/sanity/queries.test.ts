@@ -20,6 +20,7 @@ describe("queries", () => {
     expect(result).toEqual(fake);
     expect(client.fetch).toHaveBeenCalledTimes(1);
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_type == "hizmet"'));
+    expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_id, baslik, aciklama, "gorselUrl": gorsel.asset->url, sira'));
   });
 
   it("getUrunler returns the fetched list", async () => {
@@ -30,6 +31,7 @@ describe("queries", () => {
 
     expect(result).toEqual(fake);
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_type == "urunKategorisi"'));
+    expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_id, baslik, detaylar, kullanimAlani, "gorselUrl": gorsel.asset->url, sira'));
   });
 
   it("getSirketBilgisi returns the fetched company info", async () => {
@@ -47,6 +49,7 @@ describe("queries", () => {
 
     expect(result).toEqual(fake);
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_type == "sirketBilgisi"'));
+    expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('profil, vizyon, misyon, degerler, sertifikalar, ekipMetni'));
   });
 
   it("getIletisimBilgisi returns the fetched contact info", async () => {
@@ -62,5 +65,6 @@ describe("queries", () => {
 
     expect(result).toEqual(fake);
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_type == "iletisimBilgisi"'));
+    expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('santiyeAdresi, ofisAdresi, telefon, eposta'));
   });
 });
