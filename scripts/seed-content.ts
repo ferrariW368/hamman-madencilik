@@ -24,12 +24,12 @@ const client = createClient({
 async function seed() {
   console.log("Hizmetler ekleniyor...");
   for (const hizmet of hizmetler) {
-    await client.create({ _type: "hizmet", ...hizmet });
+    await client.createOrReplace({ _type: "hizmet", ...hizmet });
   }
 
   console.log("Ürünler ekleniyor...");
   for (const urun of urunler) {
-    await client.create({ _type: "urunKategorisi", ...urun });
+    await client.createOrReplace({ _type: "urunKategorisi", ...urun });
   }
 
   console.log("Şirket bilgisi ekleniyor...");

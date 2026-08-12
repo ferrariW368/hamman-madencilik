@@ -1,27 +1,27 @@
-export type SeedHizmet = { baslik: string; aciklama: string; sira: number };
-export type SeedUrun = { baslik: string; detaylar: string; kullanimAlani: string | null; sira: number };
+export type SeedHizmet = { _id: string; baslik: string; aciklama: string; sira: number };
+export type SeedUrun = { _id: string; baslik: string; detaylar: string; kullanimAlani: string | null; sira: number };
 
 export const hizmetler: SeedHizmet[] = [
-  { baslik: "Mermer Ocak İşletmeciliği", aciklama: "Modern üretim teknikleri, yüksek tonajlı makine parkı ve deneyimli ekip ile mermer rezervlerinin profesyonel şekilde çıkarılmasını sağlıyoruz. Üretim alanımızda verimlilik, iş güvenliği ve çevresel sürdürülebilirlik en önemli önceliklerdir.", sira: 1 },
-  { baslik: "Doğal Taş Üretimi", aciklama: "Farklı renk ve dokulardaki mermer çeşitlerini blok, plaka ve ebatlanmış ürünler halinde üretip hem yurtiçi hem yurtdışı müşterilerimize sunuyoruz.", sira: 2 },
-  { baslik: "Blok Mermer Kesimi", aciklama: "Ocağımızdan çıkan büyük ebatlı bloklar, hassas kesim makineleri ile standart ya da özel ölçülere göre kesilerek sevkiyata hazır hale getirilir.", sira: 3 },
-  { baslik: "Jeolojik Etüt & Ar-Ge", aciklama: "Ocak sahasının jeolojik analizleri yapılır, rezerv yapısı belirlenir, üretim planlaması bilimsel verilere dayandırılır. En verimli üretim yöntemleri Ar-Ge çalışmalarımızla sürekli geliştirilmektedir.", sira: 4 },
-  { baslik: "Çevresel Etki Değerlendirme (ÇED)", aciklama: "ÇED raporu hazırlanması, çevre izni süreçleri, toz–gürültü kontrolü, rehabilitasyon planları ve sürdürülebilir ocak yönetimi konusunda danışmanlık ve uygulama hizmeti sunuyoruz.", sira: 5 },
-  { baslik: "Proje Yönetimi", aciklama: "Yeni ocak açılışı, kapasite artırımı, altyapı yatırımları, saha planlaması ve üretim süreçlerinin uçtan uca profesyonel şekilde yönetilmesini sağlıyoruz.", sira: 6 },
-  { baslik: "Lojistik & İhracat", aciklama: "Blok mermer, plaka ve işlenmiş taş ürünlerinin kara, deniz ve konteyner lojistiği uzman kadromuzla gerçekleştirilir. İhracat sürecindeki tüm resmi işlemler müşteriler adına takip edilir.", sira: 7 },
+  { _id: "hizmet-1", baslik: "Mermer Ocak İşletmeciliği", aciklama: "Modern üretim teknikleri, yüksek tonajlı makine parkı ve deneyimli ekip ile mermer rezervlerinin profesyonel şekilde çıkarılmasını sağlıyoruz. Üretim alanımızda verimlilik, iş güvenliği ve çevresel sürdürülebilirlik en önemli önceliklerdir.", sira: 1 },
+  { _id: "hizmet-2", baslik: "Doğal Taş Üretimi", aciklama: "Farklı renk ve dokulardaki mermer çeşitlerini blok, plaka ve ebatlanmış ürünler halinde üretip hem yurtiçi hem yurtdışı müşterilerimize sunuyoruz.", sira: 2 },
+  { _id: "hizmet-3", baslik: "Blok Mermer Kesimi", aciklama: "Ocağımızdan çıkan büyük ebatlı bloklar, hassas kesim makineleri ile standart ya da özel ölçülere göre kesilerek sevkiyata hazır hale getirilir.", sira: 3 },
+  { _id: "hizmet-4", baslik: "Jeolojik Etüt & Ar-Ge", aciklama: "Ocak sahasının jeolojik analizleri yapılır, rezerv yapısı belirlenir, üretim planlaması bilimsel verilere dayandırılır. En verimli üretim yöntemleri Ar-Ge çalışmalarımızla sürekli geliştirilmektedir.", sira: 4 },
+  { _id: "hizmet-5", baslik: "Çevresel Etki Değerlendirme (ÇED)", aciklama: "ÇED raporu hazırlanması, çevre izni süreçleri, toz–gürültü kontrolü, rehabilitasyon planları ve sürdürülebilir ocak yönetimi konusunda danışmanlık ve uygulama hizmeti sunuyoruz.", sira: 5 },
+  { _id: "hizmet-6", baslik: "Proje Yönetimi", aciklama: "Yeni ocak açılışı, kapasite artırımı, altyapı yatırımları, saha planlaması ve üretim süreçlerinin uçtan uca profesyonel şekilde yönetilmesini sağlıyoruz.", sira: 6 },
+  { _id: "hizmet-7", baslik: "Lojistik & İhracat", aciklama: "Blok mermer, plaka ve işlenmiş taş ürünlerinin kara, deniz ve konteyner lojistiği uzman kadromuzla gerçekleştirilir. İhracat sürecindeki tüm resmi işlemler müşteriler adına takip edilir.", sira: 7 },
 ];
 
 export const urunler: SeedUrun[] = [
-  { baslik: "Blok Mermer", detaylar: "Ocaktan çıkarılan doğal bloklar. İhracata uygun, 1. sınıf kalite sınıflandırması. Renk, damar yapısı ve homojenlik kriterlerine göre ayrılmış blok çeşitleri.", kullanimAlani: "Yurt içi ve yurt dışı fabrikalara sevkiyat, büyük ölçekli mimari projeler.", sira: 1 },
-  { baslik: "Plaka Mermer (Slab)", detaylar: "2–3 cm kalınlıklarda. Cila, honlama, kumlama, patinato yüzey seçenekleri. Modern plaka kesim hatlarında hazırlanmış geniş ebatlı plakalar.", kullanimAlani: "Mutfak tezgahları, zemin kaplama, merdiven, duvar kaplama, iç mimari projeler.", sira: 2 },
-  { baslik: "Ebatlı Mermer Ürünleri", detaylar: "Ölçüler: 30×60, 60×60, 40×80, 45×90, projeye özel ölçüler. Yüzey seçenekleri: cilalı, honlu, eskitme, fırçalı, kumlamalı.", kullanimAlani: null, sira: 3 },
-  { baslik: "Mermer Fayans", detaylar: "İnce işçilikle hazırlanmış standart karo ölçüleri. Seramik alternatifi fakat tamamen doğal taş görünümü.", kullanimAlani: "Zemin, duvar, banyo, otel ve konut projeleri.", sira: 4 },
-  { baslik: "Özel Tasarım Mermer Ürünleri", detaylar: "Mermer lavabo, mermer masa–sehpa, mermer dekoratif objeler, mermer şömine, mermer merdiven basamak ve denizlikleri.", kullanimAlani: null, sira: 5 },
-  { baslik: "Mermer Basamak & Kaplama Ürünleri", detaylar: "Merdiven basamak, denizlik, pencere söve, kapı eşik mermeri, dış cephe özel kaplama levha ürünleri.", kullanimAlani: null, sira: 6 },
-  { baslik: "Split Face (Kırma Yüzey) Taşlar", detaylar: "Duvar kaplamalarında kullanılan dekoratif yüzey. İç ve dış mimari için doğal taş görünümü.", kullanimAlani: null, sira: 7 },
-  { baslik: "Patlatma Mermer", detaylar: "Küçük ebatlı dekoratif taş ürünleri. Farklı renk ve damar yapılarında seçenekler.", kullanimAlani: null, sira: 8 },
-  { baslik: "Mermer Mozaik", detaylar: "Küçük parçaların birleştirilmesiyle oluşturulan dekoratif yüzeyler. Altıgen, kare, şerit, merdiven bordürü gibi özel tasarımlar.", kullanimAlani: null, sira: 9 },
-  { baslik: "Projeye Özel Kesim ve Uygulama", detaylar: "Mimar ve proje sahiplerinin istediği özel ölçülere göre üretim. CNC kesim. Waterjet desen çalışmaları. Özel yüzey işlemleri.", kullanimAlani: null, sira: 10 },
+  { _id: "urun-1", baslik: "Blok Mermer", detaylar: "Ocaktan çıkarılan doğal bloklar. İhracata uygun, 1. sınıf kalite sınıflandırması. Renk, damar yapısı ve homojenlik kriterlerine göre ayrılmış blok çeşitleri.", kullanimAlani: "Yurt içi ve yurt dışı fabrikalara sevkiyat, büyük ölçekli mimari projeler.", sira: 1 },
+  { _id: "urun-2", baslik: "Plaka Mermer (Slab)", detaylar: "2–3 cm kalınlıklarda. Cila, honlama, kumlama, patinato yüzey seçenekleri. Modern plaka kesim hatlarında hazırlanmış geniş ebatlı plakalar.", kullanimAlani: "Mutfak tezgahları, zemin kaplama, merdiven, duvar kaplama, iç mimari projeler.", sira: 2 },
+  { _id: "urun-3", baslik: "Ebatlı Mermer Ürünleri", detaylar: "Ölçüler: 30×60, 60×60, 40×80, 45×90, projeye özel ölçüler. Yüzey seçenekleri: cilalı, honlu, eskitme, fırçalı, kumlamalı.", kullanimAlani: null, sira: 3 },
+  { _id: "urun-4", baslik: "Mermer Fayans", detaylar: "İnce işçilikle hazırlanmış standart karo ölçüleri. Seramik alternatifi fakat tamamen doğal taş görünümü.", kullanimAlani: "Zemin, duvar, banyo, otel ve konut projeleri.", sira: 4 },
+  { _id: "urun-5", baslik: "Özel Tasarım Mermer Ürünleri", detaylar: "Mermer lavabo, mermer masa–sehpa, mermer dekoratif objeler, mermer şömine, mermer merdiven basamak ve denizlikleri.", kullanimAlani: null, sira: 5 },
+  { _id: "urun-6", baslik: "Mermer Basamak & Kaplama Ürünleri", detaylar: "Merdiven basamak, denizlik, pencere söve, kapı eşik mermeri, dış cephe özel kaplama levha ürünleri.", kullanimAlani: null, sira: 6 },
+  { _id: "urun-7", baslik: "Split Face (Kırma Yüzey) Taşlar", detaylar: "Duvar kaplamalarında kullanılan dekoratif yüzey. İç ve dış mimari için doğal taş görünümü.", kullanimAlani: null, sira: 7 },
+  { _id: "urun-8", baslik: "Patlatma Mermer", detaylar: "Küçük ebatlı dekoratif taş ürünleri. Farklı renk ve damar yapılarında seçenekler.", kullanimAlani: null, sira: 8 },
+  { _id: "urun-9", baslik: "Mermer Mozaik", detaylar: "Küçük parçaların birleştirilmesiyle oluşturulan dekoratif yüzeyler. Altıgen, kare, şerit, merdiven bordürü gibi özel tasarımlar.", kullanimAlani: null, sira: 9 },
+  { _id: "urun-10", baslik: "Projeye Özel Kesim ve Uygulama", detaylar: "Mimar ve proje sahiplerinin istediği özel ölçülere göre üretim. CNC kesim. Waterjet desen çalışmaları. Özel yüzey işlemleri.", kullanimAlani: null, sira: 10 },
 ];
 
 export const sirketBilgisi = {
