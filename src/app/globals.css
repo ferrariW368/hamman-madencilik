@@ -8,8 +8,8 @@
   --color-stone-ink: #2b2620;
   --color-stone-bronze: #8a6f3a;
 
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body: "Inter", Arial, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
+  --font-body: var(--font-inter), Arial, sans-serif;
 }
 
 body {

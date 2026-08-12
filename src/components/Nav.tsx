@@ -10,7 +10,7 @@ const NAV_LINKS = [
 
 export function Nav() {
   return (
-    <header className="flex items-center justify-between border-b border-[color:var(--color-stone-sand)] px-6 py-4 md:px-16">
+    <header className="flex flex-col items-start gap-3 border-b border-[color:var(--color-stone-sand)] px-6 py-4 md:flex-row md:items-center md:justify-between md:px-16">
       <Link href="/" className="font-[family-name:var(--font-display)] text-lg tracking-wide">
         HAMMAN{" "}
         <span className="font-[family-name:var(--font-body)] text-xs tracking-[0.1em] text-[color:var(--color-stone-bronze)]">
@@ -18,7 +18,7 @@ export function Nav() {
         </span>
       </Link>
       <nav aria-label="Ana menü">
-        <ul className="flex gap-5 text-xs tracking-[0.06em]">
+        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs tracking-[0.06em] md:gap-5">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link href={link.href}>{link.label.toLocaleUpperCase("tr-TR")}</Link>
