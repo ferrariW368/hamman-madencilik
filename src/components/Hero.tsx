@@ -21,7 +21,7 @@ export function Hero({ eyebrow, title, emphasis, description }: HeroProps) {
       </div>
       <div
         aria-hidden="true"
-        className="h-64 w-full rounded-sm bg-gradient-to-br from-white via-[color:var(--color-stone-sand)] to-[#C9BFA6] md:h-80 md:flex-1"
+        className="h-64 w-full rounded-sm bg-gradient-to-br from-white via-[color:var(--color-stone-sand)] to-[color:var(--color-stone-taupe)] md:h-80 md:flex-1"
       />
     </section>
   );
