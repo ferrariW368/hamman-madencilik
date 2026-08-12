@@ -44,4 +44,52 @@ describe("POST /api/iletisim", () => {
       expect.objectContaining({ _type: "mesaj", adSoyad: "Test Kullanıcı" })
     );
   });
+
+  it("returns 400 for a malformed JSON body", async () => {
+    const request = new Request("http://localhost/api/iletisim", {
+      method: "POST",
+      body: "{not valid json",
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(writeClient.create).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 for an invalid email format", async () => {
+    const request = new Request("http://localhost/api/iletisim", {
+      method: "POST",
+      body: JSON.stringify({
+        adSoyad: "Test Kullanıcı",
+        eposta: "not-an-email",
+        konu: "Bilgi talebi",
+        mesaj: "Merhaba",
+      }),
+    });
+
+    const response = await POST(request);
+
+    expect(response.status).toBe(400);
+    expect(writeClient.create).not.toHaveBeenCalled();
+  });
+
+  it("returns 500 when writeClient.create rejects", async () => {
+    vi.mocked(writeClient.create).mockRejectedValueOnce(new Error("sanity down"));
+    const request = new Request("http://localhost/api/iletisim", {
+      method: "POST",
+      body: JSON.stringify({
+        adSoyad: "Test Kullanıcı",
+        eposta: "test@example.com",
+        konu: "Bilgi talebi",
+        mesaj: "Merhaba",
+      }),
+    });
+
+    const response = await POST(request);
+    const data = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(data.error).toBeTruthy();
+  });
 });
