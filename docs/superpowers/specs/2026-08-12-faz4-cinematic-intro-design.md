@@ -11,7 +11,7 @@ Kullanıcı, [igloo.inc](https://www.igloo.inc) referans videolarındaki gibi (f
 - **Video 1:** Sisli dağda buz ev, kamera yörüngesi, bloklara ayrılma, holografik "PORTFOLIO_CO_01" kartlarına geçiş
 - **Video 2:** Her bloğa tıklayınca açılan "Summary" bilgi paneli (Kapat butonlu), sıradaki bloğa geçiş, ve en sonda parçacık bulutundan beliren sosyal medya isimleri (LinkedIn, X/Twitter) arasında ok/sürükleme ile gezinme, tıklayınca ilgili hesaba yönlenme
 
-Kullanıcının kendi vizyonu: açılışta bir dağ/maden ocağı görünür, scroll ile mermer bloklara yaklaşılır, bir blok kesitine geçilir, blok döndüğünde üzerinde "HAMMAN MADENCİLİK A.Ş." yazısı kazınmış halde belirir ve **tıklanabilir** olup şirket tarihçesini açar; ardından öne çıkan ürünler sırayla blok kesitleri halinde gelir (her biri tıklanınca bilgilendirme açar); en sonda küp şeklinde bir blok üzerinde sosyal medya ikonları arasında gezinilip tıklanan hesaba yönlenilir.
+Kullanıcının kendi vizyonu: açılışta bir dağ/maden ocağı görünür, scroll ile mermer bloklara yaklaşılır, bir blok kesitine geçilir, blok döndüğünde üzerinde "HAMMAN MADENCİLİK A.Ş." yazısı kazınmış halde belirir ve **tıklanabilir** olup şirket tarihçesini açar; ardından öne çıkan ürünler sırayla blok kesitleri halinde gelir (her biri tıklanınca bilgilendirme açar); son olarak küp şeklinde bir blok üzerinde sosyal medya ve mail/telefon ikonları arasında gezinilip istenirse tıklanır — bu bir bitiş değil, kaydırmaya devam edilirse dağ/maden ocağı sahnesinden başlayarak döngü tekrar başlar.
 
 Referans videoların fotogerçekçi kalitesi (gerçek 3D render/video prodüksiyonu) bu fazın kapsamı dışındadır — kullanıcı **stilize** bir versiyonla başlanmasını, tamamen kodla (dış 3D araç/varlık gerekmeden) üretilmesini onayladı. Fotogerçekçi bir versiyon istenirse (ileride) bir 3D sanatçıdan render veya AI video aracıyla üretilmiş bir video dosyası gerekecek — bu doküman o senaryoyu kapsamıyor.
 
@@ -27,7 +27,7 @@ Referans videoların fotogerçekçi kalitesi (gerçek 3D render/video prodüksiy
 
 1. Bir ziyaretçi ilk kez `/` adresine gelir → istemci tarafında `sessionStorage`'da "intro görüldü" işareti yoksa otomatik `/tanitim` adresine yönlendirilir
 2. `/tanitim`'de scroll ile 4 aşamalı, yer yer etkileşimli bir deneyim oynar (aşağıda "Sahne Senaryosu")
-3. Herhangi bir anda sağ üstteki **"Atla →"** butonuna basılabilir, ya da deneyim sonuna kadar gidilip beliren **"Ana Sayfaya Geç"** CTA'sına basılabilir — ikisi de aynı sonucu verir: `sessionStorage` işareti set edilir, `/`'ye yönlendirilir
+3. Deneyimin sabit bir "sonu" yoktur — döngüseldir (bkz. Sahne Senaryosu). Herhangi bir anda, her aşamada sağ üstteki **"Atla →"** butonuna ve **"Ana Sayfaya Geç"** CTA'sına basılabilir — ikisi de aynı sonucu verir: `sessionStorage` işareti set edilir, `/`'ye yönlendirilir
 4. Aynı oturumda `/`'ye tekrar gelindiğinde (veya biri direkt `/urunlerimiz` gibi başka bir sayfaya gelirse) `/tanitim`'e bir daha yönlendirme yapılmaz
 5. Ana Sayfa'da küçük bir **"Tanıtımı İzle"** bağlantısı/butonu bulunur — bu, `sessionStorage` kontrolünü atlayarak her zaman `/tanitim`'e manuel gidilebilmesini sağlar
 
@@ -38,7 +38,7 @@ Referans videoların fotogerçekçi kalitesi (gerçek 3D render/video prodüksiy
 - **`IntroCanvas`** — `progress` prop'unu alan, Three.js sahnesini kuran ve her karede güncelleyen `"use client"` bileşeni
 - **`introStages.ts`** — sahnenin "senaryosu": scroll ilerlemesi aralıklarını kamera pozisyonu/hedefi, sis yoğunluğu, obje görünürlüğü gibi parametrelere eşleyen saf (framework'ten bağımsız) fonksiyonlar
 - **`InfoPanel`** (yeni) — tıklanabilir bir blok/nesne seçildiğinde açılan, yarı saydam koyu zeminli bilgi paneli (igloo'daki "Summary" panelinin karşılığı): başlık, açıklama metni, "Kapat" butonu, ve (sadece şirket paneli için) "Tüm Sayfayı Gör" linki. Sade bir React bileşeni, Three.js'ten bağımsız — DOM üzerinde canvas'ın üstüne bindirilir
-- **`SocialCubeStage`** (yeni) — deneyimin son aşaması: küp şeklinde blok, ok butonları veya sürükleme ile yüzler arasında gezinme, aktif yüzdeki sosyal ikon tıklanınca `target="_blank"` ile ilgili hesaba gider. Bu aşamada sayfa scroll'u geçici olarak kilitlenir (kullanıcı artık scroll ile değil, ok/sürükleme ile gezinir) — igloo'nun "Sound/pre-load" tarzı sabit-ekran etkileşimiyle aynı mantık
+- **`ContactCubeStage`** (yeni) — deneyimin bir bölümü (son değil, döngünün bir durağı): küp şeklinde blok, ok butonları veya sürükleme ile yüzler arasında gezinme. Yüzlerde sosyal medya ikonları (Instagram, Facebook, X, YouTube — sadece dolu olanlar) **ve** mail/telefon ikonları bulunur. Sosyal ikon tıklanınca `target="_blank"` ile ilgili hesaba gider; mail/telefon ikonu tıklanınca `InfoPanel` açılıp o iletişim bilgisini gösterir (e-posta adresi/telefon numarası, kopyalanabilir). Bu aşamada sayfa scroll'u geçici olarak kilitlenir (kullanıcı artık scroll ile değil, ok/sürükleme ile gezinir)
 - **`SkipButton`** — her zaman görünür, tıklanınca `sessionStorage` işaretini set edip `/`'ye yönlendirir
 - **`IntroFallback`** — WebGL desteklenmiyorsa veya `prefers-reduced-motion` açıksa gösterilen statik/animasyonsuz ekran (logo + kısa metin + "Ana Sayfaya Geç" butonu)
 
@@ -50,20 +50,20 @@ Referans videoların fotogerçekçi kalitesi (gerçek 3D render/video prodüksiy
 | 0.15–0.30 | Bloklara yaklaşma | Kamera, dağdan ayrılmış mermer bloklara doğru ilerler; sahne paleti soğuk gri-mavimsiden sitenin krem/bronz "Premium Doğal Taş" tonlarına yumuşakça geçer |
 | 0.30–0.45 | Şirket bloğu | Bir blok öne gelir, kesit efektiyle döner, yüzeyinde 3 boyutlu kazınmış **"HAMMAN MADENCİLİK A.Ş."** yazısı belirir. **Tıklanınca:** `InfoPanel` açılır, Sanity'deki şirket profili özetini gösterir, "Tüm Sayfayı Gör" ile `/hakkimizda`'ya gidilebilir, "Kapat" ile scroll'a devam edilir |
 | 0.45–0.85 | Öne çıkan ürünler | Sanity'de Şirket Bilgisi'nde seçilmiş ürün listesi kadar (bkz. Veri Modeli), sırayla ayrı blok kesitleri olarak belirir. Her biri **tıklanabilir**: `InfoPanel` o ürünün başlığı/açıklaması/kullanım alanını gösterir. Ürün adedine göre bu aralık otomatik eşit parçalara bölünür |
-| 0.85–1.00 | Sosyal medya finali | Scroll kilitlenir, küp şeklinde blok belirir; ok/sürükleme ile yüzler gezinilir, her yüzde bir sosyal ikon (sadece Sanity'de linki dolu olan platformlar gösterilir). Tıklanınca ilgili hesap yeni sekmede açılır; deneyim başa döner (loop) ve "Ana Sayfaya Geç" CTA'sı her zaman görünür kalır |
+| 0.85–1.00 | İletişim & Sosyal Medya seçici | Scroll geçici olarak kilitlenir, küp şeklinde blok belirir; ok/sürükleme ile yüzler gezinilir, her yüzde bir ikon: sosyal medya (sadece Sanity'de linki dolu olan platformlar) veya mail/telefon. Sosyal ikon tıklanınca ilgili hesap yeni sekmede açılır; mail/telefon ikonu tıklanınca `InfoPanel` ile iletişim bilgisi gösterilir. **Bu bir "bitiş" değildir** — kullanıcı hiçbir şeye tıklamadan kaydırmaya devam ederse (scroll kilidi burada çözülür) deneyim başa döner: sahne yumuşakça 0.00'daki dağ/maden ocağı manzarasına geçer, döngü olarak tekrar başlar. "Atla →" ve (bu aşamaya özel beliren) "Ana Sayfaya Geç" butonları her an, her aşamada kullanılabilir olmaya devam eder |
 
 ## Veri Modeli (Sanity şema değişiklikleri)
 
 Yeni içerik yazmaya gerek yok — var olan verinin yeniden kullanımı ve iki küçük şema eklemesi yeterli:
 
-- **`iletisimBilgisi`** şemasına opsiyonel sosyal medya URL alanları eklenir: `instagramUrl`, `facebookUrl`, `xUrl`, `youtubeUrl` (hepsi opsiyonel `url` tipi). Boş bırakılan platformlar `SocialCubeStage`'de hiç gösterilmez
-- **`sirketBilgisi`** şemasına `tanitimUrunleri` adında bir **referans listesi** alanı eklenir (`array of reference to urunKategorisi`). Kullanıcı Studio'da hangi ürünlerin tanıtımda gösterileceğini VE sırasını (listede sürükle-bırak ile) birlikte seçer — ayrı bir "adet" alanına gerek yok, gösterilecek ürün sayısı = seçilen ürün adedi. Boş bırakılırsa bu aşama atlanır (ürün blokları hiç gösterilmez, doğrudan sosyal medya finaline geçilir)
+- **`iletisimBilgisi`** şemasına opsiyonel sosyal medya URL alanları eklenir: `instagramUrl`, `facebookUrl`, `xUrl`, `youtubeUrl` (hepsi opsiyonel `url` tipi). Boş bırakılan platformlar `ContactCubeStage`'de hiç gösterilmez. Mail/telefon için yeni alan gerekmez — zaten var olan `telefon`/`eposta` alanları kullanılır
+- **`sirketBilgisi`** şemasına `tanitimUrunleri` adında bir **referans listesi** alanı eklenir (`array of reference to urunKategorisi`). Kullanıcı Studio'da hangi ürünlerin tanıtımda gösterileceğini VE sırasını (listede sürükle-bırak ile) birlikte seçer — ayrı bir "adet" alanına gerek yok, gösterilecek ürün sayısı = seçilen ürün adedi. Boş bırakılırsa bu aşama atlanır (ürün blokları hiç gösterilmez, doğrudan İletişim & Sosyal Medya seçicisine geçilir)
 
 ## Etkileşim Modeli
 
 - **Scroll-tetiklemeli aşamalar** (dağ, bloklara yaklaşma, şirket bloğu, ürün blokları): normal scroll ile ilerler, `InfoPanel` açıkken de scroll devam edebilir (panel kapanmaz, sadece üstte durur) — kullanıcı isterse paneli kapatmadan okumaya devam edebilir
 - **Tıklama ile bilgi:** Şirket bloğu ve her ürün bloğu tıklanabilir nesnelerdir (Three.js raycasting ile fare/dokunma konumundan hangi nesneye tıklandığı tespit edilir — küre prototipindeki pin tıklama mantığıyla aynı teknik)
-- **Sosyal medya finali:** Bu tek aşamada scroll yerine yatay ok/sürükleme ile gezinme aktif olur — kullanıcıya küçük bir "→ / ←" ipucu gösterilir
+- **İletişim & Sosyal Medya seçici:** Bu tek aşamada scroll yerine yatay ok/sürükleme ile gezinme aktif olur — kullanıcıya küçük bir "→ / ←" ipucu gösterilir. Kaydırmaya devam edilirse (tıklama olmadan) döngü başa döner
 
 ## Görsel / Malzeme Yaklaşımı
 
@@ -75,7 +75,7 @@ Yeni içerik yazmaya gerek yok — var olan verinin yeniden kullanımı ve iki k
 ## Performans, Mobil ve Erişilebilirlik (kesin gereklilik)
 
 - **iOS Safari ve Android Chrome/Samsung Internet** dahil tüm modern mobil tarayıcılarda çalışmalı — WebGL desteği bu tarayıcılarda standarttır
-- **Dokunmatik scroll ve dokunma ile tıklama** native davranışlarla çalışır; sosyal medya finalindeki yatay gezinme dokunmatik sürüklemeyi de destekler
+- **Dokunmatik scroll ve dokunma ile tıklama** native davranışlarla çalışır; İletişim & Sosyal Medya seçicisindeki yatay gezinme dokunmatik sürüklemeyi de destekler
 - **Ekran boyutuna göre sadeleştirme:** dar ekranlarda (mobil) poligon sayısı ve post-processing efektleri (gölge, bulanıklık) otomatik düşürülür
 - **`prefers-reduced-motion` açıksa veya WebGL desteklenmiyorsa:** animasyon hiç oynatılmadan `IntroFallback` gösterilir — kimse zorla beklemez, erişilebilirlik ihlali olmaz
 - **Yön değişikliği:** telefon döndürüldüğünde sahne otomatik yeniden boyutlanır, bozulma olmaz
@@ -86,7 +86,7 @@ Yeni içerik yazmaya gerek yok — var olan verinin yeniden kullanımı ve iki k
 - `SkipButton` — tıklama → `sessionStorage` set + yönlendirme davranışı Testing Library ile test edilir
 - `IntroFallback` — koşullu render mantığı (WebGL yok / reduced motion) test edilir
 - `InfoPanel` — props'a göre doğru başlık/metin render ettiği ve "Kapat"/"Tüm Sayfayı Gör" davranışları Testing Library ile test edilir
-- `SocialCubeStage`'in link filtreleme mantığı (sadece dolu URL'li platformları göstermesi) saf bir fonksiyon olarak ayrıştırılıp test edilir
+- `ContactCubeStage`'in link filtreleme mantığı (sadece dolu URL'li platformları göstermesi) saf bir fonksiyon olarak ayrıştırılıp test edilir
 - `IntroCanvas` (asıl Three.js render mantığı, raycasting tıklama tespiti dahil) otomatik test edilmez — build başarısı + gerçek tarayıcıda (masaüstü ve mobil genişlikte, gerçek tıklama/dokunma denemeleriyle) görsel doğrulama ile kontrol edilir
 
 ## Kapsam Dışı (bu doküman için)
