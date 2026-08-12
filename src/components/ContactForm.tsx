@@ -48,24 +48,24 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <label htmlFor="adSoyad" className="text-xs uppercase tracking-[0.08em]">
           Ad Soyad *
         </label>
-        <input id="adSoyad" name="adSoyad" type="text" className="border border-[color:var(--color-stone-sand)] px-3 py-2 text-sm" />
+        <input id="adSoyad" name="adSoyad" type="text" required aria-required="true" className="border border-[color:var(--color-stone-sand)] px-3 py-2 text-sm" />
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="eposta" className="text-xs uppercase tracking-[0.08em]">
           E-posta *
         </label>
-        <input id="eposta" name="eposta" type="email" className="border border-[color:var(--color-stone-sand)] px-3 py-2 text-sm" />
+        <input id="eposta" name="eposta" type="email" required aria-required="true" className="border border-[color:var(--color-stone-sand)] px-3 py-2 text-sm" />
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="konu" className="text-xs uppercase tracking-[0.08em]">
           Konu *
         </label>
-        <input id="konu" name="konu" type="text" className="border border-[color:var(--color-stone-sand)] px-3 py-2 text-sm" />
+        <input id="konu" name="konu" type="text" required aria-required="true" className="border border-[color:var(--color-stone-sand)] px-3 py-2 text-sm" />
       </div>
       <div className="flex flex-col gap-1">
         <label htmlFor="mesaj" className="text-xs uppercase tracking-[0.08em]">
