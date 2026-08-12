@@ -1,5 +1,6 @@
 import { createClient } from "@sanity/client";
-import "dotenv/config";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { hizmetler, urunler, sirketBilgisi, iletisimBilgisi } from "../src/sanity/seed-data";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
