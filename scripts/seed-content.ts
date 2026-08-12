@@ -1,3 +1,12 @@
+// WARNING: the live "production" dataset already has 7 hizmet + 10 urunKategorisi
+// documents that were created BEFORE this script used stable _id values
+// (hizmet-1..7, urun-1..10). Those existing documents still carry Sanity's
+// original auto-generated ids, so running this script now will ADD 17 new
+// documents (createOrReplace only replaces a document with a matching _id)
+// rather than replacing the old ones — doubling the live content.
+// Before re-running this script, manually delete the old auto-id hizmet/
+// urunKategorisi documents in Sanity Studio (/studio), or update this
+// warning once that one-time cleanup has been done.
 import { createClient } from "@sanity/client";
 import { config } from "dotenv";
 config({ path: ".env.local" });

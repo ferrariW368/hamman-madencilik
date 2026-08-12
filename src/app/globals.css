@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+@theme inline {
   --color-stone-cream: #FBFAF7;
   --color-stone-ivory: #F5F2EC;
   --color-stone-sand: #E8E2D6;

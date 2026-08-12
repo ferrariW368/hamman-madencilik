@@ -18,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr">
-      <body className={`${inter.variable} ${playfair.variable} font-[family-name:var(--font-body)]`}>
+    <html lang="tr" className={`${inter.variable} ${playfair.variable}`}>
+      <body className="font-[family-name:var(--font-body)]">
         <Nav />
         {children}
         <Footer />
