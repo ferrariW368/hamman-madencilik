@@ -36,7 +36,10 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
 
     function updateProgress() {
       const el = scrollRef.current;
-      if (!el) return;
+      if (!el) {
+        rafId.current = null;
+        return;
+      }
       const scrollable = el.scrollHeight - window.innerHeight;
       const value = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
       setProgress(value);
@@ -50,10 +53,13 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
     }
 
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     updateProgress();
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       if (rafId.current !== null) cancelAnimationFrame(rafId.current);
+      rafId.current = null;
     };
   }, [useFallback, ready]);
 
