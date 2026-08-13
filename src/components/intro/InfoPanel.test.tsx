@@ -10,9 +10,10 @@ describe("InfoPanel", () => {
     expect(screen.getByText("Ocaktan çıkarılan doğal bloklar.")).toBeInTheDocument();
   });
 
-  it("does not render a full-page link when fullPageHref is omitted", () => {
+  it("renders neither a full-page link nor its label when fullPageHref is omitted", () => {
     render(<InfoPanel title="X" description="Y" onClose={() => {}} />);
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText(/tüm sayfayı gör/i)).not.toBeInTheDocument();
   });
 
   it("renders a full-page link when fullPageHref is provided", () => {
