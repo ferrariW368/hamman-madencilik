@@ -9,6 +9,12 @@ describe("STAGES", () => {
       expect(STAGES[i].start).toBe(STAGES[i - 1].end);
     }
   });
+
+  it("gives every stage a strictly positive span", () => {
+    for (const stage of STAGES) {
+      expect(stage.start).toBeLessThan(stage.end);
+    }
+  });
 });
 
 describe("getActiveStage", () => {
@@ -36,6 +42,28 @@ describe("getActiveStage", () => {
   it("clamps out-of-range progress", () => {
     expect(getActiveStage(-0.5).id).toBe("mountain");
     expect(getActiveStage(1.5).id).toBe("contact");
+  });
+
+  // Half-open boundaries: a stage matches when start <= p < end, so each interior
+  // boundary value belongs to the LATER stage and anything just below it to the earlier one.
+  it("assigns the 0.15 boundary to approach and just below it to mountain", () => {
+    expect(getActiveStage(0.15).id).toBe("approach");
+    expect(getActiveStage(0.1499).id).toBe("mountain");
+  });
+
+  it("assigns the 0.3 boundary to company and just below it to approach", () => {
+    expect(getActiveStage(0.3).id).toBe("company");
+    expect(getActiveStage(0.2999).id).toBe("approach");
+  });
+
+  it("assigns the 0.45 boundary to products and just below it to company", () => {
+    expect(getActiveStage(0.45).id).toBe("products");
+    expect(getActiveStage(0.4499).id).toBe("company");
+  });
+
+  it("assigns the 0.85 boundary to contact and just below it to products", () => {
+    expect(getActiveStage(0.85).id).toBe("contact");
+    expect(getActiveStage(0.8499).id).toBe("products");
   });
 });
 
@@ -72,5 +100,21 @@ describe("getProductStageSlice", () => {
     const productsStage = STAGES.find((s) => s.id === "products")!;
     const { index } = getProductStageSlice(productsStage.start, 0);
     expect(index).toBe(-1);
+  });
+
+  // Out-of-stage progress is clamped, not rejected: -1 signals "no products" only.
+  it("clamps to the first slice for progress before the products stage", () => {
+    expect(getProductStageSlice(0.1, 4)).toEqual({ index: 0, localProgress: 0 });
+    expect(getProductStageSlice(0, 4)).toEqual({ index: 0, localProgress: 0 });
+  });
+
+  it("clamps to the last slice for progress past the products stage", () => {
+    expect(getProductStageSlice(0.95, 4)).toEqual({ index: 3, localProgress: 1 });
+    expect(getProductStageSlice(1, 4)).toEqual({ index: 3, localProgress: 1 });
+  });
+
+  it("returns index -1 even when progress is outside the products stage", () => {
+    expect(getProductStageSlice(0.1, 0).index).toBe(-1);
+    expect(getProductStageSlice(0.95, 0).index).toBe(-1);
   });
 });

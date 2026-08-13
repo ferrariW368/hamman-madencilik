@@ -27,6 +27,8 @@ export function getStageProgress(progress: number, stage: Stage): number {
   return Math.min(1, Math.max(0, (clamped - stage.start) / span));
 }
 
+// `index` is only meaningful once the caller has confirmed getActiveStage(progress).id === "products";
+// outside that stage progress is clamped, and index -1 means "no products", not "not in the products stage".
 export function getProductStageSlice(
   progress: number,
   productCount: number
