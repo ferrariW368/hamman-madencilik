@@ -58,6 +58,10 @@ describe("queries", () => {
       ofisAdresi: "Test ofis adresi",
       telefon: "555-1234",
       eposta: "test@example.com",
+      instagramUrl: null,
+      facebookUrl: null,
+      xUrl: null,
+      youtubeUrl: null,
     };
     vi.mocked(client.fetch).mockResolvedValueOnce(fake);
 
@@ -65,6 +69,6 @@ describe("queries", () => {
 
     expect(result).toEqual(fake);
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_type == "iletisimBilgisi"'));
-    expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('santiyeAdresi, ofisAdresi, telefon, eposta'));
+    expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('santiyeAdresi, ofisAdresi, telefon, eposta, instagramUrl, facebookUrl, xUrl, youtubeUrl'));
   });
 });

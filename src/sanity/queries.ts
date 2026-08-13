@@ -31,6 +31,10 @@ export type IletisimBilgisi = {
   ofisAdresi: string;
   telefon: string;
   eposta: string;
+  instagramUrl: string | null;
+  facebookUrl: string | null;
+  xUrl: string | null;
+  youtubeUrl: string | null;
 };
 
 const HIZMET_QUERY = `*[_type == "hizmet"] | order(sira asc){
@@ -46,7 +50,7 @@ const SIRKET_QUERY = `*[_type == "sirketBilgisi"][0]{
 }`;
 
 const ILETISIM_QUERY = `*[_type == "iletisimBilgisi"][0]{
-  santiyeAdresi, ofisAdresi, telefon, eposta
+  santiyeAdresi, ofisAdresi, telefon, eposta, instagramUrl, facebookUrl, xUrl, youtubeUrl
 }`;
 
 export async function getHizmetler(): Promise<Hizmet[]> {
