@@ -24,7 +24,7 @@ export type SirketBilgisi = {
   degerler: string[];
   sertifikalar: string[];
   ekipMetni: string;
-  tanitimUrunleri: UrunKategorisi[];
+  tanitimUrunleri: UrunKategorisi[] | null;
 };
 
 export type IletisimBilgisi = {
