@@ -14,4 +14,9 @@ describe("introSession", () => {
     markIntroSeen();
     expect(hasSeenIntro()).toBe(true);
   });
+
+  it("returns false when the stored value is not exactly \"1\"", () => {
+    window.sessionStorage.setItem("hamman_intro_seen", "true");
+    expect(hasSeenIntro()).toBe(false);
+  });
 });

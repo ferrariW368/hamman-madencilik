@@ -6,5 +6,6 @@ export function hasSeenIntro(): boolean {
 }
 
 export function markIntroSeen(): void {
+  if (typeof window === "undefined") return;
   window.sessionStorage.setItem(INTRO_SEEN_KEY, "1");
 }
