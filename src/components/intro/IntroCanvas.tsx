@@ -8,6 +8,10 @@ type IntroCanvasProps = {
   progress: number;
 };
 
+// Blocks are 2 units wide, so the spacing must exceed 2 for the row to read as
+// five separate blocks rather than one continuous stepped slab.
+const BLOCK_SPACING = 2.6;
+
 const FOG_STONE = new THREE.Color(0x4b5560);
 const FOG_CREAM = new THREE.Color(0xf5f2ec);
 
@@ -83,6 +87,10 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
     const scene = new THREE.Scene();
     const fog = new THREE.Fog(0x4b5560, 8, 30);
     scene.fog = fog;
+    // The sky deliberately shares the fog's Color instance: any stage that lerps
+    // the fog lerps the horizon with it, so the silhouette reads as atmospheric
+    // depth instead of meeting a hard seam against a black void.
+    scene.background = fog.color;
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
     camera.position.set(0, 3, 14);
@@ -105,7 +113,7 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
     const approachBlocks: THREE.Mesh[] = [];
     for (let i = 0; i < 5; i++) {
       const block = createBlock(marbleTexture);
-      block.position.set((i - 2) * 1.6, -0.5, -2 - i * 0.4);
+      block.position.set((i - 2) * BLOCK_SPACING, -0.5, -2 - i * 0.4);
       block.visible = false;
       scene.add(block);
       approachBlocks.push(block);
