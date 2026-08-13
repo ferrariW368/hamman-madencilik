@@ -11,6 +11,14 @@ export const sirketBilgisi = defineType({
     defineField({ name: "degerler", title: "Değerlerimiz", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "sertifikalar", title: "Belgeler & Sertifikalar", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "ekipMetni", title: "Ekibimiz", type: "text", rows: 3 }),
+    defineField({
+      name: "tanitimUrunleri",
+      title: "Tanıtımda Gösterilecek Ürünler",
+      description:
+        "Sinematik giriş animasyonunda hangi ürünlerin, hangi sırayla gösterileceğini seçin. Boş bırakılırsa bu bölüm hiç gösterilmez.",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "urunKategorisi" }] }],
+    }),
   ],
   preview: { prepare: () => ({ title: "Şirket Bilgisi (tekil)" }) },
 });

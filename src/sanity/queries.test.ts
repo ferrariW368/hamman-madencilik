@@ -42,6 +42,9 @@ describe("queries", () => {
       degerler: ["Değer 1", "Değer 2"],
       sertifikalar: ["Sertifika 1"],
       ekipMetni: "Test ekip metni",
+      tanitimUrunleri: [
+        { _id: "urun-1", baslik: "Blok Mermer", detaylar: "...", kullanimAlani: null, gorselUrl: null, sira: 1 },
+      ],
     };
     vi.mocked(client.fetch).mockResolvedValueOnce(fake);
 
@@ -50,6 +53,11 @@ describe("queries", () => {
     expect(result).toEqual(fake);
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('_type == "sirketBilgisi"'));
     expect(client.fetch).toHaveBeenCalledWith(expect.stringContaining('profil, vizyon, misyon, degerler, sertifikalar, ekipMetni'));
+    expect(client.fetch).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'tanitimUrunleri[]->{ _id, baslik, detaylar, kullanimAlani, "gorselUrl": gorsel.asset->url, sira }'
+      )
+    );
   });
 
   it("getIletisimBilgisi returns the fetched contact info", async () => {

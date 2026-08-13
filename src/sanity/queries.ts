@@ -24,6 +24,7 @@ export type SirketBilgisi = {
   degerler: string[];
   sertifikalar: string[];
   ekipMetni: string;
+  tanitimUrunleri: UrunKategorisi[];
 };
 
 export type IletisimBilgisi = {
@@ -46,7 +47,8 @@ const URUN_QUERY = `*[_type == "urunKategorisi"] | order(sira asc){
 }`;
 
 const SIRKET_QUERY = `*[_type == "sirketBilgisi"][0]{
-  profil, vizyon, misyon, degerler, sertifikalar, ekipMetni
+  profil, vizyon, misyon, degerler, sertifikalar, ekipMetni,
+  tanitimUrunleri[]->{ _id, baslik, detaylar, kullanimAlani, "gorselUrl": gorsel.asset->url, sira }
 }`;
 
 const ILETISIM_QUERY = `*[_type == "iletisimBilgisi"][0]{
