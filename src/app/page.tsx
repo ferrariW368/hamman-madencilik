@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { ServiceStrip } from "@/components/ServiceStrip";
+import { IntroRedirectGate } from "@/components/intro/IntroRedirectGate";
 import { getHizmetler, getSirketBilgisi, getUrunler } from "@/sanity/queries";
 
 export const revalidate = 60;
@@ -15,6 +16,7 @@ export default async function HomePage() {
 
   return (
     <main>
+      <IntroRedirectGate />
       <Hero
         eyebrow="Konya & Antalya · 1985'ten Bu Yana"
         title="Doğanın taşına,"
@@ -33,6 +35,12 @@ export default async function HomePage() {
           className="text-xs tracking-[0.08em] text-[color:var(--color-stone-bronze)]"
         >
           BİZİ TANIYIN
+        </Link>
+        <Link
+          href="/tanitim"
+          className="text-xs tracking-[0.08em] text-[color:var(--color-stone-bronze)]"
+        >
+          TANITIMI İZLE
         </Link>
       </div>
       <ServiceStrip items={hizmetler} />

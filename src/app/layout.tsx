@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { SiteChrome } from "@/components/SiteChrome";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -20,9 +21,16 @@ export default function RootLayout({
   return (
     <html lang="tr" className={`${inter.variable} ${playfair.variable}`}>
       <body className="font-[family-name:var(--font-body)]">
-        <Nav />
+        {/* Wrapped so the cinematic intro route renders bare — see SiteChrome
+            for why /tanitim cannot tolerate anything above or below it in the
+            document flow. */}
+        <SiteChrome>
+          <Nav />
+        </SiteChrome>
         {children}
-        <Footer />
+        <SiteChrome>
+          <Footer />
+        </SiteChrome>
       </body>
     </html>
   );
