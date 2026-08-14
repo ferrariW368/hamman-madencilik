@@ -102,7 +102,21 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
   const staleProductPanel =
     activePanel?.stage === "products" &&
     urunler[getProductStageSlice(progress, urunler.length).index]?._id !== activePanel.urun._id;
-  if (activePanel !== null && (activePanel.stage !== activeStageId || staleProductPanel)) {
+  // Same rule again, at the granularity the contact stage owns. Its subject is
+  // not the stage but the *selected face*, and unlike the products stage that
+  // selection changes without any scrolling — pressing an arrow turns a new
+  // channel to camera while the panel still describes the old one. Leaving it
+  // open would put "Telefon" and its number on screen next to the Instagram
+  // face, which is precisely the wrong-channel confusion the labels exist to
+  // prevent. Compared on `href` rather than object identity, so a re-render
+  // that rebuilds the face list does not spuriously close the panel.
+  const staleContactPanel =
+    activePanel?.stage === "contact" &&
+    contactFaces[activeFaceIndex]?.href !== activePanel.face.href;
+  if (
+    activePanel !== null &&
+    (activePanel.stage !== activeStageId || staleProductPanel || staleContactPanel)
+  ) {
     setActivePanel(null);
   }
 
@@ -235,14 +249,22 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
       {/* Only worth showing when there is more than one channel to turn between:
           with zero faces the cube is not even rendered, and with one the arrows
           would be two controls that visibly do nothing. The wrapper is
-          pointer-events-none so it never eats a click meant for the cube. */}
+          pointer-events-none so it never eats a click meant for the cube.
+
+          z-50, above InfoPanel's z-40: on desktop the panel sits at right-10 and
+          is up to max-w-xl wide, so it overlaps the right arrow, and at equal
+          z-index the panel won the stacking order (it comes later in the DOM)
+          and made that arrow unclickable while a panel was open. Raising the
+          arrows keeps every control reachable, and the ink background keeps them
+          legible over whatever they land on. Same layer as SkipButton, which is
+          in the opposite corner and overlaps neither. */}
       {activeStageId === "contact" && contactFaces.length > 1 && (
-        <div className="pointer-events-none fixed inset-x-0 top-1/2 z-40 flex -translate-y-1/2 justify-between px-6">
+        <div className="pointer-events-none fixed inset-x-0 top-1/2 z-50 flex -translate-y-1/2 justify-between px-6">
           <button
             type="button"
             onClick={() => navigateFace(-1)}
             aria-label="Önceki"
-            className="pointer-events-auto border border-[color:var(--color-stone-cream)]/40 px-3 py-2 text-[color:var(--color-stone-cream)]"
+            className="pointer-events-auto border border-[color:var(--color-stone-cream)]/40 bg-[color:var(--color-stone-ink)]/85 px-3 py-2 text-[color:var(--color-stone-cream)]"
           >
             ←
           </button>
@@ -250,7 +272,7 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
             type="button"
             onClick={() => navigateFace(1)}
             aria-label="Sonraki"
-            className="pointer-events-auto border border-[color:var(--color-stone-cream)]/40 px-3 py-2 text-[color:var(--color-stone-cream)]"
+            className="pointer-events-auto border border-[color:var(--color-stone-cream)]/40 bg-[color:var(--color-stone-ink)]/85 px-3 py-2 text-[color:var(--color-stone-cream)]"
           >
             →
           </button>

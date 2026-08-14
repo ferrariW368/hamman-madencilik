@@ -43,16 +43,55 @@ const BLOCK_HEIGHT = 1.4;
 const BLOCK_DEPTH = 1.4;
 
 // The contact cube. Named for the same reason the block dimensions are: the
-// camera framing and the click target are both derived from it.
+// camera framing, the face textures and the click target are all derived from it.
 const CONTACT_CUBE_SIZE = 1.6;
 
-// The cube spins a full turn as the user walks the faces, so its on-screen
-// silhouette is not CONTACT_CUBE_SIZE — it peaks at the diagonal, 2.263 units,
-// at 45 degrees. cameraZToFit fits exactly the width it is handed and does not
-// know about rotation (see its docblock), so the stage must hand it the swept
-// width itself. 2.263 is still under the ~2.7-unit width at which a subject
-// would have to sit far enough back to start taking fog.
-const CONTACT_CUBE_SWEPT_WIDTH = CONTACT_CUBE_SIZE * Math.SQRT2;
+// Widest the cube can ever be on screen. cameraZToFit fits exactly the width it
+// is handed and knows nothing about rotation (see its docblock), so the stage
+// must hand it the worst case itself. Because reaching all six faces needs
+// rotation about two axes, the cube can be turned corner-on, where its extent
+// along a screen axis is the space diagonal `size * sqrt(3)` = 2.771 — not the
+// face diagonal 2.263 that a Y-only spin would peak at. Using the bound rather
+// than the peak of today's particular transitions means no future face
+// ordering can quietly start cropping.
+const CONTACT_CUBE_MAX_EXTENT = CONTACT_CUBE_SIZE * Math.sqrt(3);
+
+// Which cube face each contact channel is painted on, and the cube orientation
+// that brings that face square to camera.
+//
+// `buildContactFaces` returns at most six channels and a cube has exactly six
+// faces, which is the correspondence the design is built on — so a channel gets
+// a real face, not a fraction of a turn. Distributing N channels evenly around
+// a single axis (N/count * 2*PI) only lands on an actual face when N divides
+// into the four Y-facing sides, so with 5 or 6 channels — or with 4, on the
+// top/bottom pair — it parks the cube on an edge or a corner.
+//
+// The first four ring the equator, so the common case (a site with four or
+// fewer channels) reads as a simple horizontal turn; the fifth and sixth are
+// the top and bottom, which is the only way to reach six faces at all, since
+// rotating about Y alone can never bring +Y or -Y forward.
+//
+// `material` indexes BoxGeometry's material groups, which are ordered
+// +X, -X, +Y, -Y, +Z, -Z. `euler` is the rotation that maps that face's outward
+// normal onto +Z, i.e. straight at the camera.
+const CONTACT_FACE_SLOTS: { material: number; euler: THREE.Euler }[] = [
+  { material: 4, euler: new THREE.Euler(0, 0, 0) }, // +Z front
+  { material: 0, euler: new THREE.Euler(0, -Math.PI / 2, 0) }, // +X right
+  { material: 5, euler: new THREE.Euler(0, Math.PI, 0) }, // -Z back
+  { material: 1, euler: new THREE.Euler(0, Math.PI / 2, 0) }, // -X left
+  { material: 2, euler: new THREE.Euler(Math.PI / 2, 0, 0) }, // +Y top
+  { material: 3, euler: new THREE.Euler(-Math.PI / 2, 0, 0) }, // -Y bottom
+];
+
+// Pre-built once at module load, never per frame. Quaternions rather than a
+// pair of eased Euler angles because slerp interpolates along the single
+// shortest arc between two orientations: easing rotation.x and rotation.y
+// independently would take a 270-degree detour on any step whose two targets
+// live on different axes, and would have to reason about Euler order to get the
+// composed orientation exact.
+const CONTACT_FACE_QUATERNIONS = CONTACT_FACE_SLOTS.map((slot) =>
+  new THREE.Quaternion().setFromEuler(slot.euler)
+);
 
 // Spacing must exceed BLOCK_WIDTH for the row to read as five separate blocks
 // rather than one continuous stepped slab.
@@ -144,31 +183,115 @@ function cameraZToFit(
 const FOG_STONE = new THREE.Color(0x4b5560);
 const FOG_CREAM = new THREE.Color(0xf5f2ec);
 
-function createMarbleTexture(): THREE.CanvasTexture {
-  const size = 256;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d")!;
+// The canvas size the veining was authored against. Vein width, spacing and
+// jitter scale from it, so a 512px face texture gets veins of the same visual
+// weight as the 256px block texture rather than twice as many, half as wide —
+// and at 256 the scale is 1, so the block texture is drawn with exactly the
+// constants it always was.
+const MARBLE_REFERENCE_SIZE = 256;
+
+// Cream ground plus bronze veining, filling a square canvas of any size.
+function paintMarble(ctx: CanvasRenderingContext2D, size: number): void {
+  const scale = size / MARBLE_REFERENCE_SIZE;
   ctx.fillStyle = "#F5F2EC";
   ctx.fillRect(0, 0, size, size);
   ctx.strokeStyle = "rgba(138, 111, 58, 0.35)";
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.5 * scale;
+  const step = 16 * scale;
+  const jitter = 24 * scale;
   for (let i = 0; i < 14; i++) {
     ctx.beginPath();
     const startX = Math.random() * size;
     ctx.moveTo(startX, 0);
     let x = startX;
-    for (let y = 0; y <= size; y += 16) {
-      x += (Math.random() - 0.5) * 24;
+    for (let y = 0; y <= size; y += step) {
+      x += (Math.random() - 0.5) * jitter;
       ctx.lineTo(x, y);
     }
     ctx.stroke();
   }
-  const texture = new THREE.CanvasTexture(canvas);
+}
+
+function createSquareCanvas(size: number): CanvasRenderingContext2D {
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  return canvas.getContext("2d")!;
+}
+
+function createMarbleTexture(): THREE.CanvasTexture {
+  const ctx = createSquareCanvas(256);
+  paintMarble(ctx, 256);
+  const texture = new THREE.CanvasTexture(ctx.canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   return texture;
+}
+
+// Resolution of one labelled cube face. The face is 1.6 world units and never
+// occupies more than ~60% of the frame, so on a 1265px-wide desktop canvas it
+// lands around 420px and on a 562px portrait buffer around 275px — 512 keeps
+// the lettering oversampled at both without being wasteful (six of these is
+// ~1.5MB of texture memory after upload).
+const CONTACT_FACE_TEXTURE_SIZE = 512;
+
+// Fraction of the face the label may span, matching CARVED_TEXT_FACE_FILL's
+// role on the company block: the label is measured and shrunk to fit rather
+// than assumed to fit, so a longer channel name can never overflow the face.
+const CONTACT_LABEL_FILL = 0.78;
+
+/**
+ * A marble cube face with its channel name on it.
+ *
+ * The stage is a *contact* cube — the whole point is choosing a channel — so a
+ * face has to say which channel it is. This uses the technique already in the
+ * file (`CanvasTexture` over a 2D canvas) rather than `TextGeometry`: the
+ * carved-text route needs the subsetted typeface JSON, which is subsetted to
+ * the 13 glyphs of the company name and would have to be regenerated to cover
+ * six channel labels, and it would add six more triangulated meshes to the
+ * scene. A canvas texture needs no font asset, no new dependency, and no extra
+ * geometry — and unlike the carved text it cannot intersect the solid it sits
+ * on, because it *is* the surface.
+ */
+function createContactFaceTexture(label: string): THREE.CanvasTexture {
+  const size = CONTACT_FACE_TEXTURE_SIZE;
+  const ctx = createSquareCanvas(size);
+  paintMarble(ctx, size);
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const maxWidth = size * CONTACT_LABEL_FILL;
+  // Serif to sit with the display face used elsewhere on the site. Georgia is
+  // present on Windows and macOS; the generic `serif` fallback keeps a short
+  // label legible anywhere, and nothing here depends on a webfont having
+  // loaded (a canvas drawn before a webfont arrives would silently keep the
+  // fallback glyphs, which is why no webfont is named).
+  const setFont = (px: number) => {
+    ctx.font = `600 ${px}px Georgia, "Times New Roman", serif`;
+  };
+  let fontSize = size * 0.15;
+  setFont(fontSize);
+  const naturalWidth = ctx.measureText(label).width;
+  if (naturalWidth > maxWidth) {
+    fontSize *= maxWidth / naturalWidth;
+    setFont(fontSize);
+  }
+
+  ctx.fillStyle = "#2B2620";
+  ctx.fillText(label, size / 2, size / 2);
+
+  // A bronze rule under the label, sized to the text actually drawn. Picks up
+  // the same bronze as the veining and the "Tüm Sayfayı Gör" link, and gives
+  // the face a deliberate front/back so a rotating cube reads as turning.
+  const ruleHalf = Math.min(maxWidth, ctx.measureText(label).width) / 2;
+  ctx.strokeStyle = "#8A6F3A";
+  ctx.lineWidth = size * 0.011;
+  ctx.beginPath();
+  ctx.moveTo(size / 2 - ruleHalf, size * 0.615);
+  ctx.lineTo(size / 2 + ruleHalf, size * 0.615);
+  ctx.stroke();
+
+  return new THREE.CanvasTexture(ctx.canvas);
 }
 
 function createMountain(): THREE.Mesh {
@@ -331,13 +454,36 @@ export function IntroCanvas({
       telefon: iletisim?.telefon,
     });
 
-    // Built unconditionally even when there are no faces — one geometry and one
-    // material is cheaper than making this nullable and then special-casing it
+    // One material per cube face, in BoxGeometry's group order. A face that has
+    // a channel gets that channel's label painted on it; the leftovers (a site
+    // with fewer than six channels) get the plain block marble, so an unused
+    // side is blank rather than mislabelled.
+    //
+    // Built in a single pass rather than "six plain ones, then overwrite some":
+    // an overwritten material would never be reachable from the scene graph and
+    // so would never be disposed.
+    const contactFaceTextures: THREE.CanvasTexture[] = [];
+    const contactCubeMaterials = [0, 1, 2, 3, 4, 5].map((materialIndex) => {
+      const faceIndex = CONTACT_FACE_SLOTS.findIndex((slot) => slot.material === materialIndex);
+      const face = faceIndex >= 0 ? contactFaces[faceIndex] : undefined;
+      if (!face) {
+        return new THREE.MeshStandardMaterial({ map: marbleTexture, roughness: 0.4 });
+      }
+      const texture = createContactFaceTexture(face.label);
+      contactFaceTextures.push(texture);
+      return new THREE.MeshStandardMaterial({ map: texture, roughness: 0.4 });
+    });
+
+    // Built unconditionally even when there are no faces — one geometry and six
+    // materials is cheaper than making this nullable and then special-casing it
     // in hideAll(), render() and the click handler. It is simply never shown.
-    // Parented into the scene, so cleanup's traverse disposes it.
+    // Parented into the scene, so cleanup's traverse disposes the geometry and
+    // all six materials (it already handles the material-array case); the
+    // canvas textures are not owned by the materials, so they are disposed
+    // explicitly alongside marbleTexture, which is the pattern already here.
     const contactCube = new THREE.Mesh(
       new THREE.BoxGeometry(CONTACT_CUBE_SIZE, CONTACT_CUBE_SIZE, CONTACT_CUBE_SIZE),
-      new THREE.MeshStandardMaterial({ map: marbleTexture, roughness: 0.4 })
+      contactCubeMaterials
     );
     contactCube.visible = false;
     scene.add(contactCube);
@@ -480,22 +626,24 @@ export function IntroCanvas({
         // featured products. The loop-back is unaffected either way.
         if (contactFaces.length > 0) {
           contactCube.visible = true;
-          // Face n is turned to camera by rotating 1/n-th of a turn per step.
-          // Eased rather than snapped so pressing an arrow reads as the cube
-          // turning. In-place numeric mutation — nothing is allocated here.
-          const targetRotation = (activeFaceIndexRef.current / contactFaces.length) * Math.PI * 2;
-          contactCube.rotation.y += (targetRotation - contactCube.rotation.y) * 0.1;
+          // Turn the *selected channel's own face* square to camera. Clamped
+          // because the slot table is the six a cube has; buildContactFaces
+          // cannot return more, and the clamp means it could not misindex if it
+          // ever did. slerp mutates in place along the shortest arc and
+          // allocates nothing — the target quaternions are module constants.
+          const slot = Math.min(activeFaceIndexRef.current, CONTACT_FACE_QUATERNIONS.length - 1);
+          contactCube.quaternion.slerp(CONTACT_FACE_QUATERNIONS[slot], 0.1);
         }
         // 4 is the authored desktop distance; narrow viewports pull back only as
-        // far as they must. Unlike the two block stages this passes the SWEPT
-        // width, because the cube turns a full 360 degrees rather than stopping
-        // near 90 — see CONTACT_CUBE_SWEPT_WIDTH. The cube is at the origin, so
-        // the helper's centred-subject assumption holds. Vertical was checked
-        // separately (the helper ignores height): the cube is 1.6 tall, and even
-        // at the portrait pull-back of z 6.98 the frustum is 5.77 units tall at
-        // the cube's near face, so it fills 28% of the frame height — the width
-        // is the binding constraint at every aspect, not the height.
-        camera.position.set(0, 0, cameraZToFit(camera, CONTACT_CUBE_SWEPT_WIDTH, CONTACT_CUBE_SIZE / 2, 4));
+        // far as they must. Unlike the two block stages this passes the worst-
+        // case extent rather than the authored width — see
+        // CONTACT_CUBE_MAX_EXTENT. The cube is at the origin, so the helper's
+        // centred-subject assumption holds. Vertical was checked separately (the
+        // helper ignores height): the cube's vertical extent peaks at the face
+        // diagonal 2.263, and the frustum is 2.98 units tall at the cube centre
+        // on desktop and 6.4 at the portrait pull-back, so width is the binding
+        // constraint at every aspect. Measured peaks are in the task report.
+        camera.position.set(0, 0, cameraZToFit(camera, CONTACT_CUBE_MAX_EXTENT, CONTACT_CUBE_SIZE / 2, 4));
         camera.lookAt(0, 0, 0);
         fog.color.copy(FOG_CREAM);
       } else {
@@ -602,7 +750,10 @@ export function IntroCanvas({
           materials.forEach((material) => material.dispose());
         }
       });
+      // Textures are not owned by the materials that reference them, so
+      // material.dispose() in the traverse above does not free them.
       marbleTexture.dispose();
+      contactFaceTextures.forEach((texture) => texture.dispose());
       renderer.dispose();
 
       // React may already have detached the canvas with the container subtree.
