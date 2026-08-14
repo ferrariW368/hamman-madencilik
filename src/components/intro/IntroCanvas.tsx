@@ -4,13 +4,15 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
-import { getActiveStage, getStageProgress } from "./introStages";
-import type { SirketBilgisi } from "@/sanity/queries";
+import { getActiveStage, getProductStageSlice, getStageProgress } from "./introStages";
+import type { SirketBilgisi, UrunKategorisi } from "@/sanity/queries";
 
 type IntroCanvasProps = {
   progress: number;
   sirket: SirketBilgisi | null;
+  urunler: UrunKategorisi[];
   onSelectCompany: () => void;
+  onSelectProduct: (urun: UrunKategorisi) => void;
 };
 
 const CARVED_TEXT = "HAMMAN MADENCİLİK A.Ş.";
@@ -177,7 +179,13 @@ function createBlock(marbleTexture: THREE.Texture): THREE.Mesh {
   return new THREE.Mesh(geometry, material);
 }
 
-export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasProps) {
+export function IntroCanvas({
+  progress,
+  sirket,
+  urunler,
+  onSelectCompany,
+  onSelectProduct,
+}: IntroCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(progress);
   progressRef.current = progress;
@@ -185,6 +193,15 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
   // current callback rather than close over the one from the first render.
   const onSelectCompanyRef = useRef(onSelectCompany);
   onSelectCompanyRef.current = onSelectCompany;
+  const onSelectProductRef = useRef(onSelectProduct);
+  onSelectProductRef.current = onSelectProduct;
+  // The click handler maps the clicked block back to its product. The effect
+  // builds one block per product exactly once, so the array it read at mount
+  // could be a different object by the time a click arrives; the ref keeps the
+  // lookup pointed at the current data. (The block *count* is still fixed at
+  // mount — see the note above the block construction.)
+  const urunlerRef = useRef(urunler);
+  urunlerRef.current = urunler;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -249,6 +266,26 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
     companyBlock.visible = false;
     scene.add(companyBlock);
 
+    // One block per featured product, built once at mount — never in render().
+    // Each is a separate geometry + material (same as the approach row), and
+    // each is parented into the scene, so cleanup's scene.traverse disposes all
+    // N of them without any hand-listing. They all sit at the origin because
+    // only ever one is visible at a time, and because cameraZToFit assumes the
+    // subject is centred on the camera axis.
+    //
+    // The count is fixed at mount: the effect has an empty dep array, so a
+    // `urunler` prop that later changed *length* would leave the block count
+    // stale. `urunler` is fetched server-side and handed down for the lifetime
+    // of the page, so this does not arise in practice; the click path reads
+    // urunlerRef so a same-length re-fetch still resolves to current data.
+    const productBlocks: THREE.Mesh[] = urunler.map(() => {
+      const block = createBlock(marbleTexture);
+      block.position.set(0, 0, 0);
+      block.visible = false;
+      scene.add(block);
+      return block;
+    });
+
     // The font request is asynchronous and can resolve after unmount, by which
     // point cleanup's scene.traverse disposal has already run — anything added
     // then would never be freed. The flag is checked before allocating, so the
@@ -299,6 +336,16 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
       }
     }
 
+    // Shows exactly one product block and hides the rest, so "two products on
+    // screen at once" is not a state this can reach. Pass -1 (what
+    // getProductStageSlice returns when there are no products) to show none.
+    // Indexed for the same reason as above: it runs every frame.
+    function setVisibleProductBlock(index: number) {
+      for (let i = 0; i < productBlocks.length; i++) {
+        productBlocks[i].visible = i === index;
+      }
+    }
+
     // Everything the stages own, switched off. Each branch of render() then
     // turns back on only what it shows, so a branch states its own concerns
     // instead of hand-writing a line for every object in the scene. Adding an
@@ -313,6 +360,7 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
       mountain.visible = false;
       setApproachBlocksVisible(false);
       companyBlock.visible = false;
+      setVisibleProductBlock(-1);
     }
 
     function render() {
@@ -347,9 +395,28 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
         companyBlock.visible = true;
         companyBlock.rotation.y = local * Math.PI * 0.6;
         fog.color.copy(FOG_CREAM);
+      } else if (stage.id === "products") {
+        // The stage is sub-divided evenly, one slice per product, so `index`
+        // walks the array as the user scrolls and `localProgress` restarts at 0
+        // for each. index === -1 means the CMS returned no featured products:
+        // setVisibleProductBlock(-1) then shows nothing and the stage degrades
+        // to an empty cream scene rather than throwing.
+        const { index, localProgress } = getProductStageSlice(p, productBlocks.length);
+        setVisibleProductBlock(index);
+        if (index >= 0) {
+          productBlocks[index].rotation.y = localProgress * Math.PI * 0.5;
+        }
+        // Same close-up framing contract as the company stage: 3.5 is the
+        // authored desktop distance, narrow viewports pull back only as far as
+        // they must. The block is at the origin, which is what the helper
+        // assumes; the rotation peaks at the same 2.441-unit swept width the
+        // company stage already verified fits, and stays inside fog `near`.
+        camera.position.set(0, 0.3, cameraZToFit(camera, BLOCK_WIDTH, BLOCK_DEPTH / 2, 3.5));
+        camera.lookAt(0, 0, 0);
+        fog.color.copy(FOG_CREAM);
       } else {
-        // Stages products / contact are added by later tasks: hideAll() has
-        // already left the scene empty, so this branch only states its fog.
+        // Stage contact is added by Task 13: hideAll() has already left the
+        // scene empty, so this branch only states its fog.
         fog.color.copy(FOG_CREAM);
       }
 
@@ -374,10 +441,33 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
 
-      if (getActiveStage(progressRef.current).id === "company" && companyBlock.visible) {
+      const stageId = getActiveStage(progressRef.current).id;
+
+      if (stageId === "company" && companyBlock.visible) {
         const hits = raycaster.intersectObject(companyBlock, true);
         if (hits.length > 0) {
           onSelectCompanyRef.current();
+        }
+      }
+
+      if (stageId === "products") {
+        // Whichever block render() last made visible is the one on screen, so
+        // it is the only one that can have been clicked — and its index is the
+        // product's index. Scanned rather than recomputed from progress so the
+        // hit test can never disagree with what the user actually sees.
+        let visibleIndex = -1;
+        for (let i = 0; i < productBlocks.length; i++) {
+          if (productBlocks[i].visible) {
+            visibleIndex = i;
+            break;
+          }
+        }
+        if (visibleIndex >= 0) {
+          const hits = raycaster.intersectObject(productBlocks[visibleIndex], true);
+          const urun = urunlerRef.current[visibleIndex];
+          if (hits.length > 0 && urun) {
+            onSelectProductRef.current(urun);
+          }
         }
       }
     }
