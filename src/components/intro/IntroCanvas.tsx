@@ -2,11 +2,28 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import { getActiveStage, getStageProgress } from "./introStages";
+import type { SirketBilgisi } from "@/sanity/queries";
 
 type IntroCanvasProps = {
   progress: number;
+  sirket: SirketBilgisi | null;
+  onSelectCompany: () => void;
 };
+
+const CARVED_TEXT = "HAMMAN MADENCİLİK A.Ş.";
+
+// Pre-converted typeface JSON rather than the raw TTF: three's TTFLoader cannot
+// be imported here (it does a bare `https://` import of opentype.js, which
+// webpack rejects with UnhandledSchemeError and the build fails). The TTF is
+// converted to this format ahead of time and subsetted to the 13 glyphs the
+// company name needs — including the Turkish İ (U+0130) and Ş (U+015E) — by
+// `scripts/generate-carved-font.mjs`. FontLoader parses this format natively,
+// so no font-parsing code ships to the client. Regenerate the asset if
+// CARVED_TEXT changes; the script fails loudly on a missing glyph.
+const CARVED_FONT_URL = "/fonts/playfair-display-bold-carved.typeface.json";
 
 // Blocks are 2 units wide, so the spacing must exceed 2 for the row to read as
 // five separate blocks rather than one continuous stepped slab.
@@ -91,10 +108,14 @@ function createBlock(marbleTexture: THREE.Texture): THREE.Mesh {
   return new THREE.Mesh(geometry, material);
 }
 
-export function IntroCanvas({ progress }: IntroCanvasProps) {
+export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(progress);
   progressRef.current = progress;
+  // Same reason as progressRef: the effect runs once, so it must reach the
+  // current callback rather than close over the one from the first render.
+  const onSelectCompanyRef = useRef(onSelectCompany);
+  onSelectCompanyRef.current = onSelectCompany;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -154,6 +175,36 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
       approachBlocks.push(block);
     }
 
+    const companyBlock = createBlock(marbleTexture);
+    companyBlock.position.set(0, 0, 0);
+    companyBlock.visible = false;
+    scene.add(companyBlock);
+
+    // The font request is asynchronous and can resolve after unmount, by which
+    // point cleanup's scene.traverse disposal has already run — anything added
+    // then would never be freed. The flag is checked before allocating, so the
+    // late path creates nothing at all rather than creating-then-disposing.
+    let disposed = false;
+
+    new FontLoader().load(CARVED_FONT_URL, (font) => {
+      if (disposed) return;
+      const textGeometry = new TextGeometry(CARVED_TEXT, {
+        font,
+        size: 0.16,
+        depth: 0.03,
+        curveSegments: 4,
+      });
+      textGeometry.center();
+      const textMesh = new THREE.Mesh(
+        textGeometry,
+        new THREE.MeshStandardMaterial({ color: 0x2b2620, roughness: 0.85 })
+      );
+      textMesh.position.z = 0.71;
+      // Parented into the scene graph, so the traverse-based cleanup disposes
+      // its geometry and material without any hand-listing.
+      companyBlock.add(textMesh);
+    });
+
     function render() {
       const p = progressRef.current;
       const stage = getActiveStage(p);
@@ -170,17 +221,28 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
         camera.lookAt(0, 0, 0);
         mountain.visible = true;
         approachBlocks.forEach((b) => (b.visible = false));
+        companyBlock.visible = false;
         fog.color.copy(FOG_STONE);
       } else if (stage.id === "approach") {
         camera.position.set(0, 1.5 - local * 0.5, 8 - local * 5);
         camera.lookAt(0, 0, -2);
         mountain.visible = local < 0.6;
         approachBlocks.forEach((b) => (b.visible = true));
+        companyBlock.visible = false;
         fog.color.copy(FOG_STONE).lerp(FOG_CREAM, local);
-      } else {
-        // Stages company / products / contact are added by later tasks.
+      } else if (stage.id === "company") {
+        camera.position.set(0, 0.3, 3.5);
+        camera.lookAt(0, 0, 0);
         mountain.visible = false;
         approachBlocks.forEach((b) => (b.visible = false));
+        companyBlock.visible = true;
+        companyBlock.rotation.y = local * Math.PI * 0.6;
+        fog.color.copy(FOG_CREAM);
+      } else {
+        // Stages products / contact are added by later tasks.
+        mountain.visible = false;
+        approachBlocks.forEach((b) => (b.visible = false));
+        companyBlock.visible = false;
         fog.color.copy(FOG_CREAM);
       }
 
@@ -194,6 +256,26 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
     }
     animate();
 
+    // Allocated once, reused by every click — nothing here is per-frame, but
+    // the same no-allocation-in-the-hot-path rule applies to the pointer path.
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+
+    function handleClick(event: MouseEvent) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+
+      if (getActiveStage(progressRef.current).id === "company" && companyBlock.visible) {
+        const hits = raycaster.intersectObject(companyBlock, true);
+        if (hits.length > 0) {
+          onSelectCompanyRef.current();
+        }
+      }
+    }
+    renderer.domElement.addEventListener("click", handleClick);
+
     function handleResize() {
       const size = readSize();
       const aspect = size.width / size.height;
@@ -205,8 +287,10 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
     window.addEventListener("resize", handleResize);
 
     return () => {
+      disposed = true;
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
+      renderer.domElement.removeEventListener("click", handleClick);
 
       scene.traverse((object) => {
         if (object instanceof THREE.Mesh) {

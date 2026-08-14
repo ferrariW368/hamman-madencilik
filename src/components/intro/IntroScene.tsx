@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { IntroCanvas } from "./IntroCanvas";
 import { IntroFallback } from "./IntroFallback";
+import { InfoPanel } from "./InfoPanel";
 import { SkipButton } from "./SkipButton";
 import { shouldUseFallback, detectWebGLSupport, detectPrefersReducedMotion } from "./shouldUseFallback";
 import type { SirketBilgisi, UrunKategorisi, IletisimBilgisi } from "@/sanity/queries";
@@ -18,6 +19,7 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
   const [progress, setProgress] = useState(0);
   const [useFallback, setUseFallback] = useState(false);
   const [ready, setReady] = useState(false);
+  const [activePanel, setActivePanel] = useState<"company" | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const rafId = useRef<number | null>(null);
 
@@ -72,9 +74,21 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
   return (
     <div ref={scrollRef} style={{ height: "600vh" }} className="relative bg-[color:var(--color-stone-ink)]">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
-        <IntroCanvas progress={progress} />
+        <IntroCanvas
+          progress={progress}
+          sirket={sirket}
+          onSelectCompany={() => setActivePanel("company")}
+        />
       </div>
       <SkipButton />
+      {activePanel === "company" && sirket && (
+        <InfoPanel
+          title="Hamman Madencilik A.Ş."
+          description={sirket.profil}
+          fullPageHref="/hakkimizda"
+          onClose={() => setActivePanel(null)}
+        />
+      )}
     </div>
   );
 }
