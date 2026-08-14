@@ -15,6 +15,9 @@ type IntroCanvasProps = {
 
 const CARVED_TEXT = "HAMMAN MADENCİLİK A.Ş.";
 
+// Fraction of the block's front face the carved name may span.
+const CARVED_TEXT_FACE_FILL = 0.8;
+
 // Pre-converted typeface JSON rather than the raw TTF: three's TTFLoader cannot
 // be imported here (it does a bare `https://` import of opentype.js, which
 // webpack rejects with UnhandledSchemeError and the build fails). The TTF is
@@ -25,8 +28,16 @@ const CARVED_TEXT = "HAMMAN MADENCİLİK A.Ş.";
 // CARVED_TEXT changes; the script fails loudly on a missing glyph.
 const CARVED_FONT_URL = "/fonts/playfair-display-bold-carved.typeface.json";
 
-// Blocks are 2 units wide, so the spacing must exceed 2 for the row to read as
-// five separate blocks rather than one continuous stepped slab.
+// Marble block dimensions. Named because three things are derived from them:
+// the row spacing below, the fit of the carved text to the front face, and the
+// camera distance that frames a block. Changing the box here keeps all three
+// correct instead of leaving magic numbers behind.
+const BLOCK_WIDTH = 2;
+const BLOCK_HEIGHT = 1.4;
+const BLOCK_DEPTH = 1.4;
+
+// Spacing must exceed BLOCK_WIDTH for the row to read as five separate blocks
+// rather than one continuous stepped slab.
 const BLOCK_SPACING = 2.6;
 
 // The five-block row spans ~12.4 units. Horizontal FOV is derived from the
@@ -52,6 +63,44 @@ function layoutBlockRow(row: THREE.Object3D, aspect: number): void {
   const scale = Math.min(1, aspect / BLOCK_ROW_REFERENCE_ASPECT);
   row.scale.setScalar(scale);
   row.position.z = BLOCK_ROW_DEPTH * (1 - scale);
+}
+
+// Fraction of the frame width a close-up subject is allowed to occupy. The
+// remainder is breathing room, split evenly left and right.
+const FRAME_FILL = 0.85;
+
+/**
+ * Camera z that keeps a `subjectWidth`-wide subject inside the frame.
+ *
+ * The close-up stages (`company`, and `products` / `contact` in Tasks 12-13)
+ * all frame a roughly block-sized object at a camera distance authored against
+ * a desktop window. Horizontal FOV is the vertical FOV widened by aspect, so a
+ * portrait phone sees a far narrower slice of the world and crops the subject —
+ * the same failure that hit the approach row. Rather than each stage
+ * rediscovering that, they share this helper: pass the subject's width, the z
+ * of the plane that width lives on (a block's front face is at +BLOCK_DEPTH/2,
+ * because that is the plane whose apparent size the viewer judges), and the
+ * distance the stage was authored at.
+ *
+ * Never returns less than `authoredZ`, so wide viewports keep exactly the
+ * authored framing and only narrow ones pull back. Pure arithmetic on numbers,
+ * no allocation — safe to call from render() every frame.
+ *
+ * One caveat for Tasks 12-13: `Fog` is (8, 30), so a subject that needs to sit
+ * further than ~8 units from the camera starts dissolving into fog. At fov 50
+ * and a 375x812 phone that threshold is a subject width of about 2.7 units. A
+ * wider subject wants a narrower authored width (or a vertical arrangement),
+ * not a longer pull-back.
+ */
+function cameraZToFit(
+  camera: THREE.PerspectiveCamera,
+  subjectWidth: number,
+  subjectPlaneZ: number,
+  authoredZ: number
+): number {
+  const halfVerticalFov = (camera.fov * Math.PI) / 360;
+  const distance = subjectWidth / (FRAME_FILL * 2 * Math.tan(halfVerticalFov) * camera.aspect);
+  return Math.max(authoredZ, subjectPlaneZ + distance);
 }
 
 const FOG_STONE = new THREE.Color(0x4b5560);
@@ -103,7 +152,7 @@ function createMountain(): THREE.Mesh {
 }
 
 function createBlock(marbleTexture: THREE.Texture): THREE.Mesh {
-  const geometry = new THREE.BoxGeometry(2, 1.4, 1.4);
+  const geometry = new THREE.BoxGeometry(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_DEPTH);
   const material = new THREE.MeshStandardMaterial({ map: marbleTexture, roughness: 0.5, metalness: 0.05 });
   return new THREE.Mesh(geometry, material);
 }
@@ -199,7 +248,24 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
         textGeometry,
         new THREE.MeshStandardMaterial({ color: 0x2b2620, roughness: 0.85 })
       );
-      textMesh.position.z = 0.71;
+
+      // DO NOT REMOVE: at size 0.16 this string is ~2.98 units wide against a
+      // 2-unit face, so unscaled it hangs off both edges and, once the block
+      // rotates, the letters visibly pass through the block solid. The scale is
+      // measured rather than hardcoded so it stays correct if CARVED_TEXT, the
+      // font size, or the block ever changes; it only ever shrinks (a string
+      // that already fits is left alone).
+      textGeometry.computeBoundingBox();
+      const bounds = textGeometry.boundingBox;
+      if (bounds) {
+        const textWidth = bounds.max.x - bounds.min.x;
+        if (textWidth > 0) {
+          textMesh.scale.setScalar(Math.min(1, (BLOCK_WIDTH * CARVED_TEXT_FACE_FILL) / textWidth));
+        }
+      }
+
+      // Just proud of the front face, so the lettering is never z-fighting it.
+      textMesh.position.z = BLOCK_DEPTH / 2 + 0.01;
       // Parented into the scene graph, so the traverse-based cleanup disposes
       // its geometry and material without any hand-listing.
       companyBlock.add(textMesh);
@@ -231,7 +297,9 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
         companyBlock.visible = false;
         fog.color.copy(FOG_STONE).lerp(FOG_CREAM, local);
       } else if (stage.id === "company") {
-        camera.position.set(0, 0.3, 3.5);
+        // 3.5 is the authored desktop distance and is what wide viewports get;
+        // narrow ones pull back just far enough to keep the whole block in shot.
+        camera.position.set(0, 0.3, cameraZToFit(camera, BLOCK_WIDTH, BLOCK_DEPTH / 2, 3.5));
         camera.lookAt(0, 0, 0);
         mountain.visible = false;
         approachBlocks.forEach((b) => (b.visible = false));

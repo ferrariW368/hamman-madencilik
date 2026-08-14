@@ -26,7 +26,10 @@ import { fileURLToPath } from "node:url";
 import opentype from "opentype.js";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const SOURCE_TTF = resolve(ROOT, "public/fonts/PlayfairDisplay-Bold.ttf");
+// Build-time source only, deliberately NOT under public/: everything there is
+// served, and no visitor ever downloads this file — they get the 12 kB subsetted
+// JSON below instead of the 193 kB TTF.
+const SOURCE_TTF = resolve(ROOT, "scripts/fonts/PlayfairDisplay-Bold.ttf");
 const OUTPUT_JSON = resolve(ROOT, "public/fonts/playfair-display-bold-carved.typeface.json");
 
 // Must stay in sync with CARVED_TEXT in src/components/intro/IntroCanvas.tsx.
