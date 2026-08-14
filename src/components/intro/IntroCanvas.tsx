@@ -12,6 +12,31 @@ type IntroCanvasProps = {
 // five separate blocks rather than one continuous stepped slab.
 const BLOCK_SPACING = 2.6;
 
+// The five-block row spans ~12.4 units. Horizontal FOV is derived from the
+// vertical one by aspect, so a portrait phone sees a far narrower slice of the
+// world than a desktop window and the outer blocks fall outside the frustum.
+// The row is scaled down on narrow viewports to keep all five in shot.
+// Reference aspect is a typical desktop window, where the scale stays 1.
+const BLOCK_ROW_REFERENCE_ASPECT = 1.6;
+
+// Mean authored depth of the five blocks (z = -2 .. -3.6).
+const BLOCK_ROW_DEPTH = -2.8;
+
+// Scaling is uniform rather than x-only on purpose: it keeps the blocks cubic
+// instead of squashing them into thin slabs, and because gaps and widths scale
+// together the gap:width ratio is scale-invariant — so the row can never
+// re-fuse into a single slab no matter how narrow the viewport gets.
+//
+// Scaling about the origin also drags the row toward the camera, which shrinks
+// the visible width again and eats most of the margin it just bought. Pushing
+// the group back by the depth the scale removed keeps the row at its authored
+// distance, so a phone gets the same framing margin as a desktop window.
+function layoutBlockRow(row: THREE.Object3D, aspect: number): void {
+  const scale = Math.min(1, aspect / BLOCK_ROW_REFERENCE_ASPECT);
+  row.scale.setScalar(scale);
+  row.position.z = BLOCK_ROW_DEPTH * (1 - scale);
+}
+
 const FOG_STONE = new THREE.Color(0x4b5560);
 const FOG_CREAM = new THREE.Color(0xf5f2ec);
 
@@ -90,6 +115,10 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
     // The sky deliberately shares the fog's Color instance: any stage that lerps
     // the fog lerps the horizon with it, so the silhouette reads as atmospheric
     // depth instead of meeting a hard seam against a black void.
+    // Because of that aliasing: mutate fog.color, never scene.background.
+    // scene.background.set(...) would silently rewrite the fog colour too, and
+    // reassigning scene.background would break the link. Every stage branch in
+    // render() must set its own fog colour rather than inherit the last one.
     scene.background = fog.color;
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
@@ -110,12 +139,18 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
     scene.add(mountain);
 
     const marbleTexture = createMarbleTexture();
+    // Parented to a group so the whole row can be scaled to the viewport aspect
+    // as one unit, in setup and on every resize.
+    const approachRow = new THREE.Group();
+    layoutBlockRow(approachRow, width / height);
+    scene.add(approachRow);
+
     const approachBlocks: THREE.Mesh[] = [];
     for (let i = 0; i < 5; i++) {
       const block = createBlock(marbleTexture);
       block.position.set((i - 2) * BLOCK_SPACING, -0.5, -2 - i * 0.4);
       block.visible = false;
-      scene.add(block);
+      approachRow.add(block);
       approachBlocks.push(block);
     }
 
@@ -124,11 +159,18 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
       const stage = getActiveStage(p);
       const local = getStageProgress(p, stage);
 
+      // Every branch declares the full scene state, including the fog colour.
+      // render() must be a pure function of progress: progress can jump
+      // arbitrarily (loop-back from 1.0 to 0, a Skip, a fast flick, or scroll
+      // restoration landing mid-page), so a branch that inherited the previous
+      // frame's fog would render the wrong palette until the user happened to
+      // scroll back through the stage that sets it.
       if (stage.id === "mountain") {
         camera.position.set(0, 3 - local * 1.5, 14 - local * 6);
         camera.lookAt(0, 0, 0);
         mountain.visible = true;
         approachBlocks.forEach((b) => (b.visible = false));
+        fog.color.copy(FOG_STONE);
       } else if (stage.id === "approach") {
         camera.position.set(0, 1.5 - local * 0.5, 8 - local * 5);
         camera.lookAt(0, 0, -2);
@@ -139,6 +181,7 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
         // Stages company / products / contact are added by later tasks.
         mountain.visible = false;
         approachBlocks.forEach((b) => (b.visible = false));
+        fog.color.copy(FOG_CREAM);
       }
 
       renderer.render(scene, camera);
@@ -153,9 +196,11 @@ export function IntroCanvas({ progress }: IntroCanvasProps) {
 
     function handleResize() {
       const size = readSize();
-      camera.aspect = size.width / size.height;
+      const aspect = size.width / size.height;
+      camera.aspect = aspect;
       camera.updateProjectionMatrix();
       renderer.setSize(size.width, size.height);
+      layoutBlockRow(approachRow, aspect);
     }
     window.addEventListener("resize", handleResize);
 
