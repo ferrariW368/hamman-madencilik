@@ -86,11 +86,31 @@ const FRAME_FILL = 0.85;
  * authored framing and only narrow ones pull back. Pure arithmetic on numbers,
  * no allocation — safe to call from render() every frame.
  *
- * One caveat for Tasks 12-13: `Fog` is (8, 30), so a subject that needs to sit
- * further than ~8 units from the camera starts dissolving into fog. At fov 50
- * and a 375x812 phone that threshold is a subject width of about 2.7 units. A
- * wider subject wants a narrower authored width (or a vertical arrangement),
- * not a longer pull-back.
+ * What it does NOT do — read before reusing:
+ *
+ * - **Width only.** It ignores the subject's height entirely, so a tall subject
+ *   can crop top and bottom while this reports a comfortable fit. Check the
+ *   vertical separately if a stage frames something taller than it is wide.
+ * - **Assumes the subject is centred on the camera axis** and viewed straight
+ *   down -z. An off-centre subject (a product block parked to one side) is
+ *   silently mis-framed: the helper fits its width but not its offset.
+ * - **Ignores rotation — the caller owns it.** The width you pass is the width
+ *   it fits. The company stage passes BLOCK_WIDTH (2.0), but the block rotates
+ *   to 108 degrees and a rotating box's silhouette peaks at
+ *   `sqrt(BLOCK_WIDTH^2 + BLOCK_DEPTH^2)` = 2.441 units at ~35 degrees, which
+ *   is ~92% of the frame at 375x812 rather than the declared 85%. The 8% margin
+ *   survives, so this is deliberately not compensated — but a stage that
+ *   rotates further, or a wider subject, must pass the swept width itself.
+ * - **No `far` clamp.** A degenerate aspect (a 0-width viewport, a collapsed
+ *   container) makes the returned distance grow without bound; nothing here
+ *   caps it at the camera's `far` of 100. `readSize()`'s 1px floor is what
+ *   currently stops that.
+ *
+ * And the fog caveat for Tasks 12-13: `Fog` is (8, 30), so a subject that needs
+ * to sit further than ~8 units from the camera starts dissolving into fog. At
+ * fov 50 and a 375x812 phone that threshold is a subject width of about 2.7
+ * units. A wider subject wants a narrower authored width (or a vertical
+ * arrangement), not a longer pull-back.
  */
 function cameraZToFit(
   camera: THREE.PerspectiveCamera,
@@ -271,10 +291,36 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
       companyBlock.add(textMesh);
     });
 
+    // Indexed loop rather than forEach: this runs every frame and a callback
+    // literal would be a fresh closure per call.
+    function setApproachBlocksVisible(visible: boolean) {
+      for (let i = 0; i < approachBlocks.length; i++) {
+        approachBlocks[i].visible = visible;
+      }
+    }
+
+    // Everything the stages own, switched off. Each branch of render() then
+    // turns back on only what it shows, so a branch states its own concerns
+    // instead of hand-writing a line for every object in the scene. Adding an
+    // object is one line here plus one line in the branches that show it —
+    // rather than an edit to every branch, which is the bookkeeping that let a
+    // branch forget to write fog.color in the first place.
+    //
+    // Fog is deliberately NOT defaulted here. There is no safe default: getting
+    // it wrong is invisible until someone scrolls, so every branch must state
+    // its own colour and be seen to state it.
+    function hideAll() {
+      mountain.visible = false;
+      setApproachBlocksVisible(false);
+      companyBlock.visible = false;
+    }
+
     function render() {
       const p = progressRef.current;
       const stage = getActiveStage(p);
       const local = getStageProgress(p, stage);
+
+      hideAll();
 
       // Every branch declares the full scene state, including the fog colour.
       // render() must be a pure function of progress: progress can jump
@@ -286,31 +332,24 @@ export function IntroCanvas({ progress, sirket, onSelectCompany }: IntroCanvasPr
         camera.position.set(0, 3 - local * 1.5, 14 - local * 6);
         camera.lookAt(0, 0, 0);
         mountain.visible = true;
-        approachBlocks.forEach((b) => (b.visible = false));
-        companyBlock.visible = false;
         fog.color.copy(FOG_STONE);
       } else if (stage.id === "approach") {
         camera.position.set(0, 1.5 - local * 0.5, 8 - local * 5);
         camera.lookAt(0, 0, -2);
         mountain.visible = local < 0.6;
-        approachBlocks.forEach((b) => (b.visible = true));
-        companyBlock.visible = false;
+        setApproachBlocksVisible(true);
         fog.color.copy(FOG_STONE).lerp(FOG_CREAM, local);
       } else if (stage.id === "company") {
         // 3.5 is the authored desktop distance and is what wide viewports get;
         // narrow ones pull back just far enough to keep the whole block in shot.
         camera.position.set(0, 0.3, cameraZToFit(camera, BLOCK_WIDTH, BLOCK_DEPTH / 2, 3.5));
         camera.lookAt(0, 0, 0);
-        mountain.visible = false;
-        approachBlocks.forEach((b) => (b.visible = false));
         companyBlock.visible = true;
         companyBlock.rotation.y = local * Math.PI * 0.6;
         fog.color.copy(FOG_CREAM);
       } else {
-        // Stages products / contact are added by later tasks.
-        mountain.visible = false;
-        approachBlocks.forEach((b) => (b.visible = false));
-        companyBlock.visible = false;
+        // Stages products / contact are added by later tasks: hideAll() has
+        // already left the scene empty, so this branch only states its fog.
         fog.color.copy(FOG_CREAM);
       }
 
