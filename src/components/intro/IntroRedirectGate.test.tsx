@@ -16,6 +16,7 @@ describe("IntroRedirectGate", () => {
   it("redirects to /tanitim when the intro hasn't been seen", () => {
     render(<IntroRedirectGate />);
     expect(replaceMock).toHaveBeenCalledWith("/tanitim");
+    expect(replaceMock).toHaveBeenCalledTimes(1);
   });
 
   it("does not redirect when the intro has already been seen", () => {

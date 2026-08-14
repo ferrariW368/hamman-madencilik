@@ -31,6 +31,40 @@ const LOOP_BACK_COOLDOWN_MS = 1000;
 // Downward swipe distance, in CSS pixels, that counts as "keep going" on touch.
 const LOOP_BACK_TOUCH_THRESHOLD_PX = 40;
 
+/**
+ * Development-only assertion that this component owns the whole page.
+ *
+ * `updateProgress` divides document-level `window.scrollY` by *this element's*
+ * scrollable height. That is only the same coordinate system while the scroll
+ * track is the first and only thing in the document flow. Anything rendered
+ * above it offsets `window.scrollY` from the track's own top, so every stage
+ * boundary lands early; anything below it lets the page keep scrolling after
+ * progress has already saturated at 1, unpinning the sticky canvas and
+ * scrolling the scene off screen. Neither throws, neither logs, and neither is
+ * visible in a unit test — the numbers are simply wrong, which is why this
+ * check exists at all: it is the loudest cheap signal available for a failure
+ * that is otherwise entirely silent.
+ *
+ * Compiled out of production builds: `process.env.NODE_ENV` is inlined at build
+ * time, so the whole body is dead code the minifier drops.
+ */
+function warnIfMiscalibrated(el: HTMLDivElement) {
+  if (process.env.NODE_ENV === "production") return;
+  const above = el.offsetTop;
+  const below = document.documentElement.scrollHeight - el.scrollHeight - above;
+  if (above === 0 && below === 0) return;
+  console.warn(
+    `[IntroScene] Scroll progress is mis-calibrated: ${above}px of layout above the ` +
+      `scroll track and ${below}px below it. Progress is computed from this element's ` +
+      `own height against document-level window.scrollY, so the stage boundaries are ` +
+      `now offset and the sticky canvas will unpin before the page bottom — silently, ` +
+      `with no error. The cause is almost always site chrome on a route that is ` +
+      `supposed to be bare: add this route to CHROMELESS_ROUTES in ` +
+      `src/components/SiteChrome.tsx so the header and footer are not rendered, or ` +
+      `remove whatever else shares the page with IntroScene.`
+  );
+}
+
 // A panel is owned by the stage that opened it and lives exactly as long as
 // that stage is active. The owning stage is stored *on* the panel rather than
 // inferred from the panel's value, because the two stop coinciding here: the
@@ -154,6 +188,7 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     updateProgress();
+    if (scrollRef.current) warnIfMiscalibrated(scrollRef.current);
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
