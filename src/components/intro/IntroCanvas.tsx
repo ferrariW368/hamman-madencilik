@@ -190,21 +190,24 @@ const FOG_CREAM = new THREE.Color(0xf5f2ec);
 // constants it always was.
 const MARBLE_REFERENCE_SIZE = 256;
 
-// Cream ground plus bronze veining, filling a square canvas of any size.
-function paintMarble(ctx: CanvasRenderingContext2D, size: number): void {
-  const scale = size / MARBLE_REFERENCE_SIZE;
+// Cream ground plus bronze veining, filling a canvas of any size or aspect.
+// A label face is as wide as the world face it goes on, so this cannot assume
+// a square; the vein scale keys off the longer side so a wide, short face gets
+// veins of the same weight rather than stretched ones.
+function paintMarble(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+  const scale = Math.max(width, height) / MARBLE_REFERENCE_SIZE;
   ctx.fillStyle = "#F5F2EC";
-  ctx.fillRect(0, 0, size, size);
+  ctx.fillRect(0, 0, width, height);
   ctx.strokeStyle = "rgba(138, 111, 58, 0.35)";
   ctx.lineWidth = 1.5 * scale;
   const step = 16 * scale;
   const jitter = 24 * scale;
   for (let i = 0; i < 14; i++) {
     ctx.beginPath();
-    const startX = Math.random() * size;
+    const startX = Math.random() * width;
     ctx.moveTo(startX, 0);
     let x = startX;
-    for (let y = 0; y <= size; y += step) {
+    for (let y = 0; y <= height; y += step) {
       x += (Math.random() - 0.5) * jitter;
       ctx.lineTo(x, y);
     }
@@ -212,16 +215,16 @@ function paintMarble(ctx: CanvasRenderingContext2D, size: number): void {
   }
 }
 
-function createSquareCanvas(size: number): CanvasRenderingContext2D {
+function createCanvas(width: number, height: number): CanvasRenderingContext2D {
   const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
+  canvas.width = width;
+  canvas.height = height;
   return canvas.getContext("2d")!;
 }
 
 function createMarbleTexture(): THREE.CanvasTexture {
-  const ctx = createSquareCanvas(256);
-  paintMarble(ctx, 256);
+  const ctx = createCanvas(MARBLE_REFERENCE_SIZE, MARBLE_REFERENCE_SIZE);
+  paintMarble(ctx, MARBLE_REFERENCE_SIZE, MARBLE_REFERENCE_SIZE);
   const texture = new THREE.CanvasTexture(ctx.canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
@@ -231,64 +234,139 @@ function createMarbleTexture(): THREE.CanvasTexture {
 // Resolution of one labelled cube face. The face is 1.6 world units and never
 // occupies more than ~60% of the frame, so on a 1265px-wide desktop canvas it
 // lands around 420px and on a 562px portrait buffer around 275px — 512 keeps
-// the lettering oversampled at both without being wasteful (six of these is
-// ~1.5MB of texture memory after upload).
+// the lettering oversampled at both without being wasteful.
 const CONTACT_FACE_TEXTURE_SIZE = 512;
+
+// Texture height of a labelled product-block face; the width is derived from
+// the world face's aspect so the lettering is never stretched. A block face is
+// 1.4 world units tall against the cube's 1.6, and a product block is on screen
+// at roughly the same size, so a slightly smaller texture holds the same texel
+// density. Two faces per product are labelled (see PRODUCT_LABEL_FACE_WIDTHS),
+// which is what keeps this from being 512.
+const PRODUCT_LABEL_TEXTURE_HEIGHT = 384;
+
+// Which faces of a product block carry the product name, and how wide each of
+// those faces is in world units.
+//
+// The block rotates 0 -> 90 degrees about Y across its slice, so +Z (material
+// group 4) is square to camera at the start of the slice and -X (group 1) is
+// square to camera at the end. Labelling both means the name is readable for
+// the whole sweep rather than turning edge-on halfway through and leaving an
+// anonymous slab for the second half — which is the defect this exists to fix.
+// BoxGeometry's material groups are ordered +X, -X, +Y, -Y, +Z, -Z.
+const PRODUCT_LABEL_FACE_WIDTHS: Record<number, number> = {
+  4: BLOCK_WIDTH,
+  1: BLOCK_DEPTH,
+};
 
 // Fraction of the face the label may span, matching CARVED_TEXT_FACE_FILL's
 // role on the company block: the label is measured and shrunk to fit rather
-// than assumed to fit, so a longer channel name can never overflow the face.
-const CONTACT_LABEL_FILL = 0.78;
+// than assumed to fit, so a longer name can never overflow the face.
+const LABEL_FACE_FILL = 0.78;
+
+// Product names are short phrases ("Ebatlı Mermer Ürünleri"), not single words
+// like the contact channels. Forcing those onto one line would shrink them to
+// fit the width and waste the height; two lines keeps the type far larger. A
+// single-word label wraps to one line and is drawn exactly as before.
+const LABEL_MAX_LINES = 2;
+
+// Greedy word wrap at the current font. Once the line budget is spent, the
+// remaining words go on the last line regardless of width — the caller's
+// shrink-to-fit step is what guarantees the result actually fits.
+function wrapLabel(
+  ctx: CanvasRenderingContext2D,
+  label: string,
+  maxWidth: number,
+  maxLines: number
+): string[] {
+  const words = label.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [label];
+  const lines: string[] = [];
+  let current = words[0];
+  for (let i = 1; i < words.length; i++) {
+    const candidate = `${current} ${words[i]}`;
+    if (lines.length === maxLines - 1 || ctx.measureText(candidate).width <= maxWidth) {
+      current = candidate;
+    } else {
+      lines.push(current);
+      current = words[i];
+    }
+  }
+  lines.push(current);
+  return lines;
+}
 
 /**
- * A marble cube face with its channel name on it.
+ * A marble face with a name on it, in ink over a bronze rule.
  *
- * The stage is a *contact* cube — the whole point is choosing a channel — so a
- * face has to say which channel it is. This uses the technique already in the
- * file (`CanvasTexture` over a 2D canvas) rather than `TextGeometry`: the
- * carved-text route needs the subsetted typeface JSON, which is subsetted to
- * the 13 glyphs of the company name and would have to be regenerated to cover
- * six channel labels, and it would add six more triangulated meshes to the
- * scene. A canvas texture needs no font asset, no new dependency, and no extra
- * geometry — and unlike the carved text it cannot intersect the solid it sits
- * on, because it *is* the surface.
+ * Shared by the contact cube (a channel name per face) and the product blocks
+ * (the product name). Both need the same thing — an object in the scene that
+ * says what it is — so this is one helper with a size, not two near-copies.
+ *
+ * This uses the technique already in the file (`CanvasTexture` over a 2D
+ * canvas) rather than `TextGeometry`: the carved-text route needs the subsetted
+ * typeface JSON, which covers only the 13 glyphs of the company name and would
+ * have to be regenerated for every channel and product name, and it would add a
+ * triangulated mesh per label. A canvas texture needs no font asset, no new
+ * dependency and no extra geometry — and unlike the carved text it cannot
+ * intersect the solid it sits on, because it *is* the surface.
+ *
+ * `widthPx`/`heightPx` must match the aspect of the world face this goes on, or
+ * the lettering is stretched: a product block's front face is 2.0 x 1.4 while
+ * its side face is 1.4 x 1.4, so the two are not interchangeable.
  */
-function createContactFaceTexture(label: string): THREE.CanvasTexture {
-  const size = CONTACT_FACE_TEXTURE_SIZE;
-  const ctx = createSquareCanvas(size);
-  paintMarble(ctx, size);
+function createLabelTexture(label: string, widthPx: number, heightPx: number): THREE.CanvasTexture {
+  const ctx = createCanvas(widthPx, heightPx);
+  paintMarble(ctx, widthPx, heightPx);
 
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  const maxWidth = size * CONTACT_LABEL_FILL;
+  const maxWidth = widthPx * LABEL_FACE_FILL;
   // Serif to sit with the display face used elsewhere on the site. Georgia is
-  // present on Windows and macOS; the generic `serif` fallback keeps a short
-  // label legible anywhere, and nothing here depends on a webfont having
-  // loaded (a canvas drawn before a webfont arrives would silently keep the
-  // fallback glyphs, which is why no webfont is named).
+  // present on Windows and macOS and covers the Turkish glyphs these names use
+  // (İ, Ş, ğ, ı, Ü); the generic `serif` fallback keeps a label legible
+  // anywhere. Nothing here depends on a webfont having loaded — a canvas drawn
+  // before a webfont arrives would silently keep the fallback glyphs with no
+  // way to notice, which is why no webfont is named.
   const setFont = (px: number) => {
     ctx.font = `600 ${px}px Georgia, "Times New Roman", serif`;
   };
-  let fontSize = size * 0.15;
+  // Keyed off the SHORT side so a wide, short face does not get type so tall it
+  // collides with the rule.
+  let fontSize = Math.min(widthPx, heightPx) * 0.15;
   setFont(fontSize);
-  const naturalWidth = ctx.measureText(label).width;
-  if (naturalWidth > maxWidth) {
-    fontSize *= maxWidth / naturalWidth;
+
+  const lines = wrapLabel(ctx, label, maxWidth, LABEL_MAX_LINES);
+  const widest = Math.max(...lines.map((line) => ctx.measureText(line).width));
+  if (widest > maxWidth) {
+    fontSize *= maxWidth / widest;
     setFont(fontSize);
   }
 
   ctx.fillStyle = "#2B2620";
-  ctx.fillText(label, size / 2, size / 2);
+  const lineHeight = fontSize * 1.15;
+  // A single line sits on the vertical centre with the rule at 0.615 of the
+  // height — exactly the layout the contact cube was reviewed with, so adding
+  // wrapping did not move the approved faces. Extra lines grow about that centre.
+  const firstLineY = heightPx / 2 - ((lines.length - 1) * lineHeight) / 2;
+  lines.forEach((line, i) => {
+    ctx.fillText(line, widthPx / 2, firstLineY + i * lineHeight);
+  });
 
-  // A bronze rule under the label, sized to the text actually drawn. Picks up
-  // the same bronze as the veining and the "Tüm Sayfayı Gör" link, and gives
-  // the face a deliberate front/back so a rotating cube reads as turning.
-  const ruleHalf = Math.min(maxWidth, ctx.measureText(label).width) / 2;
+  // A bronze rule under the label, sized to the widest line actually drawn.
+  // Picks up the same bronze as the veining and the "Tüm Sayfayı Gör" link, and
+  // gives the face a deliberate front/back so a rotating solid reads as turning.
+  const drawnWidest = Math.max(...lines.map((line) => ctx.measureText(line).width));
+  const ruleHalf = Math.min(maxWidth, drawnWidest) / 2;
+  const ruleY =
+    lines.length === 1
+      ? heightPx * 0.615
+      : firstLineY + (lines.length - 1) * lineHeight + fontSize * 0.85;
   ctx.strokeStyle = "#8A6F3A";
-  ctx.lineWidth = size * 0.011;
+  ctx.lineWidth = Math.max(widthPx, heightPx) * 0.011;
   ctx.beginPath();
-  ctx.moveTo(size / 2 - ruleHalf, size * 0.615);
-  ctx.lineTo(size / 2 + ruleHalf, size * 0.615);
+  ctx.moveTo(widthPx / 2 - ruleHalf, ruleY);
+  ctx.lineTo(widthPx / 2 + ruleHalf, ruleY);
   ctx.stroke();
 
   return new THREE.CanvasTexture(ctx.canvas);
@@ -415,20 +493,48 @@ export function IntroCanvas({
     companyBlock.visible = false;
     scene.add(companyBlock);
 
+    // Canvas label textures, from every call site, collected for disposal.
+    // Textures are NOT owned by the materials that reference them, so the
+    // scene.traverse cleanup below frees the materials but would leak these.
+    const labelTextures: THREE.CanvasTexture[] = [];
+
     // One block per featured product, built once at mount — never in render().
-    // Each is a separate geometry + material (same as the approach row), and
-    // each is parented into the scene, so cleanup's scene.traverse disposes all
-    // N of them without any hand-listing. They all sit at the origin because
-    // only ever one is visible at a time, and because cameraZToFit assumes the
-    // subject is centred on the camera axis.
+    // Each is a separate geometry + materials, and each is parented into the
+    // scene, so cleanup's scene.traverse disposes all N of them without any
+    // hand-listing. They all sit at the origin because only ever one is visible
+    // at a time, and because cameraZToFit assumes the subject is centred on the
+    // camera axis.
+    //
+    // Each block carries its product's NAME on the two faces that turn to
+    // camera during its slice. Without it the stage renders four identically
+    // textured slabs across 40% of the intro and the only way to learn which
+    // product is on screen is to click it — verified frame-identical across all
+    // four products in Task 15. A block with no `baslik` falls back to plain
+    // marble on every face rather than an empty label plate.
     //
     // The count is fixed at mount: the effect has an empty dep array, so a
     // `urunler` prop that later changed *length* would leave the block count
     // stale. `urunler` is fetched server-side and handed down for the lifetime
     // of the page, so this does not arise in practice; the click path reads
     // urunlerRef so a same-length re-fetch still resolves to current data.
-    const productBlocks: THREE.Mesh[] = urunler.map(() => {
-      const block = createBlock(marbleTexture);
+    const productBlocks: THREE.Mesh[] = urunler.map((urun) => {
+      const materials = [0, 1, 2, 3, 4, 5].map((materialIndex) => {
+        const faceWidth = PRODUCT_LABEL_FACE_WIDTHS[materialIndex];
+        if (faceWidth === undefined || !urun.baslik) {
+          return new THREE.MeshStandardMaterial({ map: marbleTexture, roughness: 0.5, metalness: 0.05 });
+        }
+        const texture = createLabelTexture(
+          urun.baslik,
+          Math.round((PRODUCT_LABEL_TEXTURE_HEIGHT * faceWidth) / BLOCK_HEIGHT),
+          PRODUCT_LABEL_TEXTURE_HEIGHT
+        );
+        labelTextures.push(texture);
+        return new THREE.MeshStandardMaterial({ map: texture, roughness: 0.5, metalness: 0.05 });
+      });
+      const block = new THREE.Mesh(
+        new THREE.BoxGeometry(BLOCK_WIDTH, BLOCK_HEIGHT, BLOCK_DEPTH),
+        materials
+      );
       block.position.set(0, 0, 0);
       block.visible = false;
       scene.add(block);
@@ -462,15 +568,18 @@ export function IntroCanvas({
     // Built in a single pass rather than "six plain ones, then overwrite some":
     // an overwritten material would never be reachable from the scene graph and
     // so would never be disposed.
-    const contactFaceTextures: THREE.CanvasTexture[] = [];
     const contactCubeMaterials = [0, 1, 2, 3, 4, 5].map((materialIndex) => {
       const faceIndex = CONTACT_FACE_SLOTS.findIndex((slot) => slot.material === materialIndex);
       const face = faceIndex >= 0 ? contactFaces[faceIndex] : undefined;
       if (!face) {
         return new THREE.MeshStandardMaterial({ map: marbleTexture, roughness: 0.4 });
       }
-      const texture = createContactFaceTexture(face.label);
-      contactFaceTextures.push(texture);
+      const texture = createLabelTexture(
+        face.label,
+        CONTACT_FACE_TEXTURE_SIZE,
+        CONTACT_FACE_TEXTURE_SIZE
+      );
+      labelTextures.push(texture);
       return new THREE.MeshStandardMaterial({ map: texture, roughness: 0.4 });
     });
 
@@ -753,7 +862,7 @@ export function IntroCanvas({
       // Textures are not owned by the materials that reference them, so
       // material.dispose() in the traverse above does not free them.
       marbleTexture.dispose();
-      contactFaceTextures.forEach((texture) => texture.dispose());
+      labelTextures.forEach((texture) => texture.dispose());
       renderer.dispose();
 
       // React may already have detached the canvas with the container subtree.
