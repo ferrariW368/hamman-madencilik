@@ -5,14 +5,18 @@ import * as THREE from "three";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import { getActiveStage, getProductStageSlice, getStageProgress } from "./introStages";
-import type { SirketBilgisi, UrunKategorisi } from "@/sanity/queries";
+import { buildContactFaces, type ContactFace } from "./contactCubeFaces";
+import type { SirketBilgisi, UrunKategorisi, IletisimBilgisi } from "@/sanity/queries";
 
 type IntroCanvasProps = {
   progress: number;
   sirket: SirketBilgisi | null;
   urunler: UrunKategorisi[];
+  iletisim: IletisimBilgisi | null;
+  activeFaceIndex: number;
   onSelectCompany: () => void;
   onSelectProduct: (urun: UrunKategorisi) => void;
+  onSelectContact: (face: ContactFace) => void;
 };
 
 const CARVED_TEXT = "HAMMAN MADENCİLİK A.Ş.";
@@ -37,6 +41,18 @@ const CARVED_FONT_URL = "/fonts/playfair-display-bold-carved.typeface.json";
 const BLOCK_WIDTH = 2;
 const BLOCK_HEIGHT = 1.4;
 const BLOCK_DEPTH = 1.4;
+
+// The contact cube. Named for the same reason the block dimensions are: the
+// camera framing and the click target are both derived from it.
+const CONTACT_CUBE_SIZE = 1.6;
+
+// The cube spins a full turn as the user walks the faces, so its on-screen
+// silhouette is not CONTACT_CUBE_SIZE — it peaks at the diagonal, 2.263 units,
+// at 45 degrees. cameraZToFit fits exactly the width it is handed and does not
+// know about rotation (see its docblock), so the stage must hand it the swept
+// width itself. 2.263 is still under the ~2.7-unit width at which a subject
+// would have to sit far enough back to start taking fog.
+const CONTACT_CUBE_SWEPT_WIDTH = CONTACT_CUBE_SIZE * Math.SQRT2;
 
 // Spacing must exceed BLOCK_WIDTH for the row to read as five separate blocks
 // rather than one continuous stepped slab.
@@ -183,8 +199,11 @@ export function IntroCanvas({
   progress,
   sirket,
   urunler,
+  iletisim,
+  activeFaceIndex,
   onSelectCompany,
   onSelectProduct,
+  onSelectContact,
 }: IntroCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(progress);
@@ -202,6 +221,13 @@ export function IntroCanvas({
   // mount — see the note above the block construction.)
   const urunlerRef = useRef(urunler);
   urunlerRef.current = urunler;
+  const onSelectContactRef = useRef(onSelectContact);
+  onSelectContactRef.current = onSelectContact;
+  // Which face is turned to camera. Owned by IntroScene (the arrow buttons live
+  // in the DOM overlay, not in the scene), read by render() every frame and by
+  // the click handler — hence a ref rather than a dep.
+  const activeFaceIndexRef = useRef(activeFaceIndex);
+  activeFaceIndexRef.current = activeFaceIndex;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -286,6 +312,36 @@ export function IntroCanvas({
       return block;
     });
 
+    // The contact channels the CMS actually has values for, in the order
+    // buildContactFaces returns them. Built here rather than in the component
+    // body so it is allocated once at mount instead of on every progress tick
+    // (~60/s during a scroll) for a value only the effect ever reads. Same
+    // mount-time capture as `urunler` above: `iletisim` is server-fetched and
+    // handed down for the lifetime of the page, so it does not go stale.
+    //
+    // The list can legitimately be EMPTY — every social field is optional and
+    // even telefon/eposta can be blank in a half-filled document. See the
+    // contact branch of render() for what that renders as.
+    const contactFaces = buildContactFaces({
+      instagramUrl: iletisim?.instagramUrl,
+      facebookUrl: iletisim?.facebookUrl,
+      xUrl: iletisim?.xUrl,
+      youtubeUrl: iletisim?.youtubeUrl,
+      eposta: iletisim?.eposta,
+      telefon: iletisim?.telefon,
+    });
+
+    // Built unconditionally even when there are no faces — one geometry and one
+    // material is cheaper than making this nullable and then special-casing it
+    // in hideAll(), render() and the click handler. It is simply never shown.
+    // Parented into the scene, so cleanup's traverse disposes it.
+    const contactCube = new THREE.Mesh(
+      new THREE.BoxGeometry(CONTACT_CUBE_SIZE, CONTACT_CUBE_SIZE, CONTACT_CUBE_SIZE),
+      new THREE.MeshStandardMaterial({ map: marbleTexture, roughness: 0.4 })
+    );
+    contactCube.visible = false;
+    scene.add(contactCube);
+
     // The font request is asynchronous and can resolve after unmount, by which
     // point cleanup's scene.traverse disposal has already run — anything added
     // then would never be freed. The flag is checked before allocating, so the
@@ -361,6 +417,7 @@ export function IntroCanvas({
       setApproachBlocksVisible(false);
       companyBlock.visible = false;
       setVisibleProductBlock(-1);
+      contactCube.visible = false;
     }
 
     function render() {
@@ -414,9 +471,38 @@ export function IntroCanvas({
         camera.position.set(0, 0.3, cameraZToFit(camera, BLOCK_WIDTH, BLOCK_DEPTH / 2, 3.5));
         camera.lookAt(0, 0, 0);
         fog.color.copy(FOG_CREAM);
+      } else if (stage.id === "contact") {
+        // The cube is shown only when the CMS actually gave us a channel. With
+        // no faces it would be a marble cube that looks exactly like a full one
+        // (the faces carry no labels) but silently does nothing when clicked —
+        // a dead affordance. Hiding it degrades the stage to an empty cream
+        // scene instead, the same way the products stage degrades with no
+        // featured products. The loop-back is unaffected either way.
+        if (contactFaces.length > 0) {
+          contactCube.visible = true;
+          // Face n is turned to camera by rotating 1/n-th of a turn per step.
+          // Eased rather than snapped so pressing an arrow reads as the cube
+          // turning. In-place numeric mutation — nothing is allocated here.
+          const targetRotation = (activeFaceIndexRef.current / contactFaces.length) * Math.PI * 2;
+          contactCube.rotation.y += (targetRotation - contactCube.rotation.y) * 0.1;
+        }
+        // 4 is the authored desktop distance; narrow viewports pull back only as
+        // far as they must. Unlike the two block stages this passes the SWEPT
+        // width, because the cube turns a full 360 degrees rather than stopping
+        // near 90 — see CONTACT_CUBE_SWEPT_WIDTH. The cube is at the origin, so
+        // the helper's centred-subject assumption holds. Vertical was checked
+        // separately (the helper ignores height): the cube is 1.6 tall, and even
+        // at the portrait pull-back of z 6.98 the frustum is 5.77 units tall at
+        // the cube's near face, so it fills 28% of the frame height — the width
+        // is the binding constraint at every aspect, not the height.
+        camera.position.set(0, 0, cameraZToFit(camera, CONTACT_CUBE_SWEPT_WIDTH, CONTACT_CUBE_SIZE / 2, 4));
+        camera.lookAt(0, 0, 0);
+        fog.color.copy(FOG_CREAM);
       } else {
-        // Stage contact is added by Task 13: hideAll() has already left the
-        // scene empty, so this branch only states its fog.
+        // Unreachable by construction — StageId has five members and all five
+        // are handled above. Kept so that adding a sixth stage cannot land in a
+        // branch with no fog of its own, which is the failure this file is most
+        // prone to.
         fog.color.copy(FOG_CREAM);
       }
 
@@ -468,6 +554,26 @@ export function IntroCanvas({
           if (hits.length > 0 && urun) {
             onSelectProductRef.current(urun);
           }
+        }
+      }
+
+      // This is the only path in the app that can open a new browser tab, so it
+      // is gated three times over and every gate is about what the user can
+      // actually see: the contact stage must be the active one, the cube must be
+      // the thing render() last made visible (so an empty face list, which never
+      // shows the cube, can never reach here), and the ray must actually hit it.
+      // A scroll, a swipe or a click on empty sky cannot satisfy all three — a
+      // `click` event only fires on a press and release in the same place, and
+      // the arrow buttons are DOM siblings above the canvas, so pressing one
+      // never reaches this handler at all.
+      if (stageId === "contact" && contactCube.visible) {
+        const hits = raycaster.intersectObject(contactCube, true);
+        if (hits.length > 0) {
+          // The face the user is looking at, not one derived from the ray: the
+          // cube carries no per-face content, so hit-testing which of the six
+          // sides the ray struck would open a channel the user did not choose.
+          const face = contactFaces[activeFaceIndexRef.current];
+          if (face) onSelectContactRef.current(face);
         }
       }
     }
