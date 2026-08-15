@@ -1,13 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { markIntroSeen } from "./introSession";
 
 export function SkipButton() {
   const router = useRouter();
 
   function handleSkip() {
-    markIntroSeen();
     router.push("/");
   }
 

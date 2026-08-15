@@ -9,16 +9,14 @@ vi.mock("next/navigation", () => ({
 
 describe("SkipButton", () => {
   beforeEach(() => {
-    window.sessionStorage.clear();
     pushMock.mockClear();
   });
 
-  it("marks the intro as seen and navigates home when clicked", () => {
+  it("navigates home when clicked", () => {
     render(<SkipButton />);
 
     fireEvent.click(screen.getByRole("button", { name: /atla/i }));
 
-    expect(window.sessionStorage.getItem("hamman_intro_seen")).toBe("1");
     expect(pushMock).toHaveBeenCalledWith("/");
   });
 

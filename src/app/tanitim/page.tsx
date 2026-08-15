@@ -5,20 +5,19 @@ export const revalidate = 60;
 
 export const metadata = {
   title: "Tanıtım — Hamman Madencilik",
-  // `IntroRedirectGate` on the homepage sends any visitor with empty
-  // sessionStorage here — and Googlebot renders client JS while starting every
-  // crawl with empty storage, so it takes that redirect on each visit to `/`.
-  // The destination is a 600vh WebGL canvas with no headings and no body copy,
-  // so letting it be indexed offers the crawler nothing and risks the homepage's
-  // own ranking, which is the page this company actually needs found.
+  // This route renders a 600vh WebGL canvas: no headings, no body copy, nothing
+  // a search result could usefully show. Indexing it would put an empty page in
+  // front of people searching for the company's actual products.
   //
-  // `follow: true` is deliberate: the crawler should still traverse out of here
-  // (the intro's panels link to /hakkimizda and /urunlerimiz) — we are declining
+  // `follow: true` is deliberate — the crawler should still traverse out of here
+  // (the intro's panels link to /hakkimizda and /urunlerimiz). We are declining
   // to index this page, not cutting it out of the link graph.
   //
-  // Decided with the client: keep the redirect, drop the page from the index.
-  // The visitor experience is unchanged. `/` carries no robots directive and so
-  // stays indexable by default.
+  // This directive is also why nothing may automatically redirect to this route.
+  // An earlier version had the homepage do exactly that; because Googlebot
+  // renders client JS, the redirect ran during a crawl of `/` and this noindex
+  // ended up applying to the document served at the homepage's own URL. See the
+  // comment in src/app/page.tsx before adding any automatic navigation here.
   robots: { index: false, follow: true },
 };
 

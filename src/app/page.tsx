@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { ServiceStrip } from "@/components/ServiceStrip";
-import { IntroRedirectGate } from "@/components/intro/IntroRedirectGate";
 import { getHizmetler, getSirketBilgisi, getUrunler } from "@/sanity/queries";
 
 export const revalidate = 60;
@@ -16,7 +15,15 @@ export default async function HomePage() {
 
   return (
     <main>
-      <IntroRedirectGate />
+      {/* The intro is reached through the TANITIMI İZLE link below, never by an
+          automatic redirect. A client-side redirect from here to /tanitim was
+          built and then removed: Googlebot renders JS, so it followed the
+          redirect on every crawl of this page, and because /tanitim is marked
+          noindex the directive ended up applying to the document served at THIS
+          url — risking the homepage itself dropping out of the index. Making
+          the intro opt-in removes that whole class of problem. If the automatic
+          reveal is ever wanted back, /tanitim needs real server-rendered copy
+          and its noindex removed first. */}
       <Hero
         eyebrow="Konya & Antalya · 1985'ten Bu Yana"
         title="Doğanın taşına,"
