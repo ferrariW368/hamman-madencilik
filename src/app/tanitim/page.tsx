@@ -5,6 +5,21 @@ export const revalidate = 60;
 
 export const metadata = {
   title: "Tanıtım — Hamman Madencilik",
+  // `IntroRedirectGate` on the homepage sends any visitor with empty
+  // sessionStorage here — and Googlebot renders client JS while starting every
+  // crawl with empty storage, so it takes that redirect on each visit to `/`.
+  // The destination is a 600vh WebGL canvas with no headings and no body copy,
+  // so letting it be indexed offers the crawler nothing and risks the homepage's
+  // own ranking, which is the page this company actually needs found.
+  //
+  // `follow: true` is deliberate: the crawler should still traverse out of here
+  // (the intro's panels link to /hakkimizda and /urunlerimiz) — we are declining
+  // to index this page, not cutting it out of the link graph.
+  //
+  // Decided with the client: keep the redirect, drop the page from the index.
+  // The visitor experience is unchanged. `/` carries no robots directive and so
+  // stays indexable by default.
+  robots: { index: false, follow: true },
 };
 
 export default async function TanitimPage() {
