@@ -24,7 +24,17 @@ export type SirketBilgisi = {
   degerler: string[];
   sertifikalar: string[];
   ekipMetni: string;
-  tanitimUrunleri: UrunKategorisi[] | null;
+  // Two independent holes, and the type has to model both or a consumer will
+  // only close the one it can see:
+  //  - the whole field is `null` when the CMS field was never set (GROQ returns
+  //    null for a missing field on a pre-existing singleton), and
+  //  - an INDIVIDUAL element is `null` when its referenced document has been
+  //    deleted *or merely unpublished* — `[]->` dereferences to null in place
+  //    rather than dropping the entry. Unpublishing a featured product is an
+  //    ordinary Studio action, so this is a routine state, not a corrupt one.
+  // Typing it `UrunKategorisi[] | null` hid the second hole from the compiler
+  // and let `?? []` look like a complete fix. Consumers must filter.
+  tanitimUrunleri: (UrunKategorisi | null)[] | null;
 };
 
 export type IletisimBilgisi = {

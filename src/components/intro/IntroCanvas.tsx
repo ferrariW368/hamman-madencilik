@@ -163,11 +163,30 @@ const FRAME_FILL = 0.85;
  *   caps it at the camera's `far` of 100. `readSize()`'s 1px floor is what
  *   currently stops that.
  *
- * And the fog caveat for Tasks 12-13: `Fog` is (8, 30), so a subject that needs
- * to sit further than ~8 units from the camera starts dissolving into fog. At
- * fov 50 and a 375x812 phone that threshold is a subject width of about 2.7
- * units. A wider subject wants a narrower authored width (or a vertical
- * arrangement), not a longer pull-back.
+ * And the fog caveat. This was previously stated as a subject width, and two of
+ * the three consumers reasoned from it incorrectly, so here it is as the thing
+ * that actually fogs:
+ *
+ * - **The quantity Fog `near` (8) applies to is the depth of the
+ *   CONTENT-BEARING PLANE — `returnedZ - subjectPlaneZ`, which is exactly the
+ *   `distance` term below.** Not the camera's z, and not the subject's width.
+ *   Fog is per-fragment on distance from the camera, so what matters is how far
+ *   the surface the viewer is reading sits from the eye, and that surface is
+ *   the plane whose z you passed as `subjectPlaneZ`. A subject can therefore
+ *   have its camera parked past `near` and still take zero fog on the face that
+ *   carries its lettering — which is the contact cube's real situation at
+ *   portrait: camera z 8.370, front face depth 7.570, fog factor 0. Reasoning
+ *   from the camera position alone reports a problem that is not there;
+ *   reasoning from the subject's width reports it at the wrong threshold.
+ * - Since `distance = subjectWidth / (FRAME_FILL * 2 * tan(fov/2) * aspect)`,
+ *   the width at which the content plane first reaches `near` depends on the
+ *   viewport, so it is not a constant: at 375x812 (aspect 0.4618) it is about
+ *   **2.93 units**, and the useful form of the question is usually the other
+ *   way round — the contact cube's 2.771-unit extent first touches fog below
+ *   viewport aspect ~0.437, narrower than any phone in portrait.
+ * - The remedy when a subject genuinely does not fit is still a narrower
+ *   authored width or a vertical arrangement, never a longer pull-back: pulling
+ *   back is what pushes the content plane into the fog in the first place.
  */
 function cameraZToFit(
   camera: THREE.PerspectiveCamera,
@@ -222,10 +241,31 @@ function createCanvas(width: number, height: number): CanvasRenderingContext2D {
   return canvas.getContext("2d")!;
 }
 
+// Every CanvasTexture in this file carries an explicit `colorSpace`, and it has
+// to be set per texture — there is no global default that covers it.
+//
+// A 2D canvas holds sRGB-encoded bytes. `CanvasTexture` defaults to
+// `NoColorSpace`, which tells the renderer those bytes are already linear, so
+// since r152 (ColorManagement on by default, and three here is r185) they were
+// sampled as linear and then re-encoded to sRGB on output — an unrequested
+// gamma applied to every surface in the scene. The transform is close to
+// identity near white and severe in the shadows, so it barely touched the cream
+// ground and wrecked the parts that carry meaning: the label ink #2B2620 left
+// the canvas dark and reached the screen at roughly #727272, mid-grey on
+// near-white instead of near-black on cream, and the bronze veining washed out
+// to the point that the marble read as blank card. The labels were added as a
+// merge-blocker fix precisely so the blocks say what they are, so the stage was
+// paying the cost of that fix without collecting its benefit.
+//
+// Setting SRGBColorSpace is the whole correction: the sampler decodes to linear
+// on read, lighting happens in linear as it should, and the output encode is
+// then the only encode. Verified by capturing all five stages at desktop and
+// portrait before and after and comparing the frames.
 function createMarbleTexture(): THREE.CanvasTexture {
   const ctx = createCanvas(MARBLE_REFERENCE_SIZE, MARBLE_REFERENCE_SIZE);
   paintMarble(ctx, MARBLE_REFERENCE_SIZE, MARBLE_REFERENCE_SIZE);
   const texture = new THREE.CanvasTexture(ctx.canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   return texture;
@@ -369,7 +409,9 @@ function createLabelTexture(label: string, widthPx: number, heightPx: number): T
   ctx.lineTo(widthPx / 2 + ruleHalf, ruleY);
   ctx.stroke();
 
-  return new THREE.CanvasTexture(ctx.canvas);
+  const texture = new THREE.CanvasTexture(ctx.canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
 }
 
 function createMountain(): THREE.Mesh {
@@ -721,8 +763,17 @@ export function IntroCanvas({
         // Same close-up framing contract as the company stage: 3.5 is the
         // authored desktop distance, narrow viewports pull back only as far as
         // they must. The block is at the origin, which is what the helper
-        // assumes; the rotation peaks at the same 2.441-unit swept width the
-        // company stage already verified fits, and stays inside fog `near`.
+        // assumes, and the rotation peaks at the same 2.441-unit swept width the
+        // company stage already verified fits.
+        //
+        // On fog, stated as cameraZToFit's docblock now states it: what has to
+        // stay inside Fog `near` (8) is the depth of the CONTENT-BEARING PLANE,
+        // not the camera position and not the subject's width. Here that plane
+        // is the labelled front face at +BLOCK_DEPTH/2, which is the z passed
+        // below, so its depth is `returnedZ - BLOCK_DEPTH/2`: 2.8 at desktop
+        // (where the authored 3.5 floor wins) and 5.463 at 375x812. Both are
+        // well inside 8, and the label would only begin to fog below viewport
+        // aspect ~0.32 — narrower than any phone in portrait.
         camera.position.set(0, 0.3, cameraZToFit(camera, BLOCK_WIDTH, BLOCK_DEPTH / 2, 3.5));
         camera.lookAt(0, 0, 0);
         fog.color.copy(FOG_CREAM);

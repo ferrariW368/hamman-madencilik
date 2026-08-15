@@ -1,3 +1,14 @@
+"use client";
+
+// Declared rather than inherited. This component binds onClick, so it can only
+// exist in the client bundle — but nothing here said so: it compiled as a client
+// component purely because its only importer, IntroScene, carries the directive.
+// That made this file's correctness a fact established in a different file, and
+// it left src/components/intro/ internally inconsistent (SkipButton had the
+// directive, this did not). Declaring it makes the requirement local, so a
+// future server component importing this gets a clear error at the import
+// instead of a confusing one about passing event handlers across the boundary.
+
 type InfoPanelProps = {
   title: string;
   description: string;

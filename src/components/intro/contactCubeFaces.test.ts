@@ -53,13 +53,20 @@ describe("buildContactFaces", () => {
       eposta: "info@example.com",
       telefon: "+90 532 000 00 00",
     });
-    expect(faces.map((f) => f.kind)).toEqual([
-      "instagram",
-      "facebook",
-      "x",
-      "youtube",
-      "email",
-      "phone",
+    // Deep-equal the whole array, not just the kinds. `external` is the field
+    // that decides whether a click opens a new browser tab (window.open) or an
+    // InfoPanel, and it was asserted for instagram only — so flipping it on
+    // Facebook, X or YouTube shipped a green suite. The labels are user-visible
+    // text on the cube faces and were equally unpinned. toEqual on an array is
+    // positional, so this also keeps pinning the order the cube's face slots
+    // depend on.
+    expect(faces).toEqual([
+      { kind: "instagram", label: "Instagram", href: "https://instagram.com/x", external: true },
+      { kind: "facebook", label: "Facebook", href: "https://facebook.com/x", external: true },
+      { kind: "x", label: "X", href: "https://x.com/x", external: true },
+      { kind: "youtube", label: "YouTube", href: "https://youtube.com/x", external: true },
+      { kind: "email", label: "E-posta", href: "mailto:info@example.com", external: false },
+      { kind: "phone", label: "Telefon", href: "tel:+905320000000", external: false },
     ]);
   });
 });

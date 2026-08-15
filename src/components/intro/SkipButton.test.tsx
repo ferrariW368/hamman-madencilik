@@ -21,4 +21,28 @@ describe("SkipButton", () => {
     expect(window.sessionStorage.getItem("hamman_intro_seen")).toBe("1");
     expect(pushMock).toHaveBeenCalledWith("/");
   });
+
+  // jsdom compiles no Tailwind and performs no layout, so contrast cannot be
+  // measured here; these pin the two utilities that carry the fix, which is what
+  // a regression would delete. The real numbers, measured in a browser against
+  // the finished scene: cream #FBFAF7 on the cream sky #F5F2EC is 1.07:1 — the
+  // state this shipped in — and cream on the ink/85 plate is 12.9:1.
+  it("has an opaque background, so it stays legible over the cream stages", () => {
+    render(<SkipButton />);
+
+    expect(screen.getByRole("button", { name: /atla/i }).className).toMatch(
+      /bg-\[color:var\(--color-stone-ink\)\]/
+    );
+  });
+
+  // The only exit from the WebGL path, which loops rather than ending — so it
+  // has to be operable and locatable by keyboard, and it had no focus treatment
+  // at all.
+  it("has a visible focus indicator for keyboard users", () => {
+    render(<SkipButton />);
+
+    expect(screen.getByRole("button", { name: /atla/i }).className).toMatch(
+      /focus-visible:outline-\[color:var\(--color-stone-cream\)\]/
+    );
+  });
 });

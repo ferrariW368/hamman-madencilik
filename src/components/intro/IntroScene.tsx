@@ -52,7 +52,17 @@ function warnIfMiscalibrated(el: HTMLDivElement) {
   if (process.env.NODE_ENV === "production") return;
   const above = el.offsetTop;
   const below = document.documentElement.scrollHeight - el.scrollHeight - above;
-  if (above === 0 && below === 0) return;
+  // A pixel of tolerance, not an exact match. `offsetTop` and both
+  // `scrollHeight`s are integers rounded from independently computed layout
+  // boxes, so at fractional browser zoom (110%, 125% — ordinary settings) the
+  // two can round apart by 1px on a page that is in fact perfectly calibrated.
+  // Exact equality made that fire a paragraph-long warning describing a
+  // catastrophic mis-calibration that had not happened. This is the only
+  // detector the branch has for its highest-consequence silent failure, and a
+  // guard that cries wolf is one developers learn to scroll past — so the
+  // tolerance protects the signal. It is far below the real failure's
+  // magnitude: site chrome cost 61px above and 81px below when it was live.
+  if (Math.abs(above) <= 1 && Math.abs(below) <= 1) return;
   console.warn(
     `[IntroScene] Scroll progress is mis-calibrated: ${above}px of layout above the ` +
       `scroll track and ${below}px below it. Progress is computed from this element's ` +
@@ -63,6 +73,33 @@ function warnIfMiscalibrated(el: HTMLDivElement) {
       `src/components/SiteChrome.tsx so the header and footer are not rendered, or ` +
       `remove whatever else shares the page with IntroScene.`
   );
+}
+
+/**
+ * True only for an absolute `http:`/`https:` URL.
+ *
+ * `window.open` in `handleSelectContact` is the only outbound sink in the whole
+ * branch, and the string it is handed comes from Sanity verbatim —
+ * `buildContactFaces` passes it through untouched. The schema's `type: "url"`
+ * validation is a Studio-side form check: it does not cover documents written
+ * through the API, imported content, or documents that predate the field's
+ * validation rule, so it cannot be the only gate. Anything that is not
+ * absolute http(s) — `javascript:`, `data:`, a bare relative path, a malformed
+ * string — is rejected here and falls back to the panel.
+ *
+ * Parsed with `URL` rather than string-matched: a prefix test on the raw string
+ * is easy to write in a way that a leading space, a tab or a mixed-case scheme
+ * slips past, and `URL` normalises all three before reporting the protocol. No
+ * base is passed, so a relative href throws rather than inheriting the site's
+ * own origin and looking safe.
+ */
+function isHttpUrl(href: string): boolean {
+  try {
+    const { protocol } = new URL(href);
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 // A panel is owned by the stage that opened it and lives exactly as long as
@@ -246,11 +283,15 @@ export function IntroScene({ sirket, urunler, iletisim, onFinish }: IntroScenePr
   }, [useFallback, ready]);
 
   function handleSelectContact(face: ContactFace) {
-    if (face.external) {
+    if (face.external && isHttpUrl(face.href)) {
       // Called synchronously from the canvas click handler, which is itself
       // inside a real user gesture — so this is not treated as a popup.
       window.open(face.href, "_blank", "noopener,noreferrer");
     } else {
+      // Either a mail/phone channel, or a social URL that failed the scheme
+      // check. Showing it in the panel is the right degradation for both: the
+      // visitor still sees the value the CMS holds and can act on it, instead of
+      // a click that either does nothing or does something unintended.
       setActivePanel({ stage: "contact", face });
     }
   }

@@ -1,4 +1,4 @@
-import { getSirketBilgisi, getIletisimBilgisi } from "@/sanity/queries";
+import { getSirketBilgisi, getIletisimBilgisi, type UrunKategorisi } from "@/sanity/queries";
 import { TanitimClient } from "./TanitimClient";
 
 export const revalidate = 60;
@@ -16,11 +16,28 @@ export default async function TanitimPage() {
   // on the 3D scene would fire the *old* list's href while the panel showed the
   // new one, navigating the visitor somewhere they did not choose.
   //
-  // `tanitimUrunleri` is `UrunKategorisi[] | null` — null whenever the CMS field
-  // is left empty. IntroCanvas calls `urunler.map` at mount, so passing null
-  // through would be a hard crash on mount rather than the empty-scene path the
-  // products stage handles gracefully. `?? []` is the real fallback, not a cast.
-  const urunler = sirket?.tanitimUrunleri ?? [];
+  // This is the boundary where `tanitimUrunleri`'s TWO holes are closed, and
+  // both have to be, because they fail differently:
+  //
+  //  - The whole field is null when the CMS field was never set. IntroCanvas
+  //    calls `urunler.map` at mount, so passing null through would be a hard
+  //    crash rather than the empty-scene path the products stage handles.
+  //    That is what `?? []` covers.
+  //  - An individual ELEMENT is null when its referenced product has been
+  //    deleted or merely unpublished — `[]->` dereferences to null in place.
+  //    IntroCanvas's per-face material loop reads `urun.baslik` on every entry
+  //    whose material index carries a label (see PRODUCT_LABEL_FACE_WIDTHS), so
+  //    one null element throws a TypeError inside the mount effect. There is no
+  //    error boundary on this route and the homepage redirects every first-time
+  //    visitor here, so that took the whole route down. `.filter` covers it.
+  //
+  // The type predicate is what makes this a real narrowing rather than a cast:
+  // `SirketBilgisi.tanitimUrunleri` is now `(UrunKategorisi | null)[] | null`,
+  // so the compiler requires this filter and will require it again at any
+  // future consumer. Everything downstream of here gets `UrunKategorisi[]`.
+  const urunler = (sirket?.tanitimUrunleri ?? []).filter(
+    (urun): urun is UrunKategorisi => urun !== null
+  );
 
   return <TanitimClient sirket={sirket} urunler={urunler} iletisim={iletisim} />;
 }
