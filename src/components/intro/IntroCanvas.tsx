@@ -259,8 +259,14 @@ function createCanvas(width: number, height: number): CanvasRenderingContext2D {
 //
 // Setting SRGBColorSpace is the whole correction: the sampler decodes to linear
 // on read, lighting happens in linear as it should, and the output encode is
-// then the only encode. Verified by capturing all five stages at desktop and
-// portrait before and after and comparing the frames.
+// then the only encode.
+//
+// Status of the evidence, stated precisely because an earlier version of this
+// comment overstated it: the transform above is analytically correct and the
+// direction of the change is certain — the label ink gets darker, the veining
+// comes back. The rendered result has NOT been looked at. Task 15's frame
+// captures, the only pass in this project that examined the scene by eye,
+// predate this line and therefore show the uncorrected colours.
 function createMarbleTexture(): THREE.CanvasTexture {
   const ctx = createCanvas(MARBLE_REFERENCE_SIZE, MARBLE_REFERENCE_SIZE);
   paintMarble(ctx, MARBLE_REFERENCE_SIZE, MARBLE_REFERENCE_SIZE);

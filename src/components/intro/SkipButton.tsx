@@ -28,8 +28,10 @@ export function SkipButton() {
     // than around it. An outline outside sits on the scene, which is grey for the
     // first 30% and cream for the rest, so no single ring colour could clear 3:1
     // against both. Inside, it lands on this button's own ink background, where
-    // cream is ~13:1 regardless of the stage. Verified with getComputedStyle in a
-    // real browser, not assumed from the utility names.
+    // cream clears the 3:1 requirement in every stage: 9.1:1 where the sky is
+    // cream (the 70% this fix exists for) and 13.1:1 over the grey mountain fog.
+    // Verified with getComputedStyle in a real browser, not assumed from the
+    // utility names.
     <button
       type="button"
       onClick={handleSkip}
