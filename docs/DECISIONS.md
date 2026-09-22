@@ -280,10 +280,250 @@ Status: LOCKED GATE; branch/tag/hotfix conventions AUDIT-DEPENDENT.
 
 ## D-024 — Publication Rights Are Separate From Provenance
 
-Decision: Production assets require usage\_rights = OWNED or PERMITTED. UNKNOWN assets cannot ship.
+Decision: Production assets require usage_rights = OWNED or PERMITTED. UNKNOWN assets cannot ship.
 
 Reason: Knowing where an asset came from does not establish permission to publish it.
 
 Rejected: Treating provenance alone as publication approval.
+
+Status: LOCKED.
+
+
+
+## D-025 — V2 Technical Foundation
+
+
+
+Decision: Retain Next.js 15 App Router, React 19, TypeScript, Sanity, Tailwind CSS v4 and Vitest/Testing Library as the V2 technical foundation.
+
+
+
+Reason: The legacy audit found this stack current, internally consistent and already suitable for the approved V2 architecture.
+
+
+
+Rejected: Full stack replacement without a demonstrated technical need.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-026 — Legacy UI Is Not the V2 Starting Point
+
+
+
+Decision: Existing legacy routes, page markup, navigation, Hero, footer and content-domain UI are not to be incrementally restyled into V2. V2 routes and page experiences will be rebuilt against PROJECT.md.
+
+
+
+Reason: The existing information architecture and content model represent a materially different website.
+
+
+
+Rejected: Cosmetic redesign of the existing legacy site.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-027 — Styling System
+
+
+
+Decision: Tailwind CSS v4 is the primary V2 styling system. styled-components will not be used for new V2 production code and may be removed once no retained legacy dependency requires it.
+
+
+
+Reason: Tailwind is already active in the project while styled-components has no confirmed source usage.
+
+
+
+Rejected: Maintaining two parallel styling systems without a requirement.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-028 — Locale Routing Architecture
+
+
+
+Decision: V2 uses locale-aware App Router paths under src/app/\[locale]/ with TR and EN active in V1 and architecture prepared for ZH and AR.
+
+
+
+Reason: Locale-aware URLs, hreflang, canonical metadata and RTL readiness are locked product requirements and are costly to retrofit later.
+
+
+
+Rejected: Building non-localized routes first and adding i18n after the site is complete.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-029 — Internationalization Implementation
+
+
+
+Decision: Use a lightweight repository-controlled dictionary/message architecture for V1 unless implementation evidence during STEP 04 demonstrates a concrete need for an additional i18n dependency.
+
+
+
+Reason: V1 requires TR and EN with ZH/AR-ready architecture, but dependency growth must be justified rather than automatic.
+
+
+
+Rejected: Installing an i18n package solely by convention before the required behavior is demonstrated.
+
+
+
+Status: LOCKED DIRECTION; exact implementation may be adjusted only with documented technical reason.
+
+
+
+
+
+## D-030 — Sanity Strategy
+
+
+
+Decision: Retain Sanity infrastructure and integration patterns, but rebuild V2 content schemas around Stone, Quarry, Project, Event, technical data and required provenance/rights metadata.
+
+
+
+Reason: The existing Sanity mechanism is reusable, while the existing content domain does not model the V2 product.
+
+
+
+Rejected: Reusing legacy content schemas simply because they already exist.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-031 — Testing Strategy
+
+
+
+Decision: Retain Vitest and Testing Library. V2 tests should focus on high-value behavior such as locale routing, navigation, unit conversion/persistence, contact states and other critical interactive logic rather than broad low-value snapshot coverage.
+
+
+
+Reason: The existing testing stack is suitable and already integrated.
+
+
+
+Rejected: Replacing the test stack without technical necessity or relying primarily on snapshots.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-032 — SEO Architecture
+
+
+
+Decision: V2 SEO is rebuilt using the Next.js Metadata API with locale-aware metadata, canonical URLs, hreflang, OpenGraph, sitemap, robots and useful 404 handling.
+
+
+
+Reason: The legacy audit found the current SEO implementation materially incomplete against PROJECT.md requirements.
+
+
+
+Rejected: Carrying forward the current minimal static metadata as the V2 SEO implementation.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-033 — Media Strategy
+
+
+
+Decision: Use Next.js production media capabilities and explicit approved remote-source configuration. Production media must also satisfy docs/ASSETS.md provenance and usage-rights gates.
+
+
+
+Reason: Technical image delivery and publication permission are separate requirements and both must be satisfied.
+
+
+
+Rejected: Unrestricted remote media, undocumented third-party assets or bypassing the asset registry.
+
+
+
+Status: LOCKED.
+
+
+
+
+
+## D-034 — Contact Form Architecture
+
+
+
+Decision: The existing ContactForm and /api/iletisim implementation may be used only as a structural reference. Its current validation, delivery and protection behavior is not approved as the V2 production contact system.
+
+
+
+Reason: The audit identified missing delivery verification, anti-spam/rate limiting, legal/privacy handling and production-grade validation.
+
+
+
+Rejected: Extending the legacy contact endpoint as if it were already production-ready.
+
+
+
+Status: LOCKED; backend, recipient, anti-spam, logging, retention and legal choices remain PENDING EREN.
+
+
+
+
+
+## D-035 — Dependency Changes
+
+
+
+Decision: No new V2 dependency is installed until a concrete STEP 04 implementation need exists and the dependency's purpose is documented. styled-components removal is allowed after confirming no retained code depends on it.
+
+
+
+Reason: Avoid unnecessary package growth while preserving deliberate architectural decisions.
+
+
+
+Rejected: Installing libraries speculatively during foundation work.
+
+
 
 Status: LOCKED.
