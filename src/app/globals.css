@@ -1,11 +1,12 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-foundation-canvas: #fbfaf7;
-  --color-foundation-surface: #f5f2ec;
-  --color-foundation-border: #e8e2d6;
-  --color-foundation-ink: #2b2620;
-  --color-foundation-accent: #8a6f3a;
+  --color-foundation-canvas: #eeece6;
+  --color-foundation-surface: #f7f5f0;
+  --color-foundation-ink: #292720;
+  --color-foundation-muted: #706d64;
+  --color-foundation-border: #cfc9be;
+  --color-foundation-accent: #78643f;
 
   /* Legacy routes still consume these aliases until their approved V2 replacement. */
   --color-stone-cream: var(--color-foundation-canvas);
@@ -19,9 +20,38 @@
   --font-body: var(--font-inter), Arial, sans-serif;
 }
 
+:root {
+  --space-page: clamp(1.25rem, 3vw, 3rem);
+  --container-content: 80rem;
+  --container-reading: 46rem;
+  --text-display: clamp(2.5rem, 6vw, 5.5rem);
+  --text-title: clamp(1.75rem, 3vw, 3rem);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-foundation-accent) 55%, transparent);
+  --duration-fast: 160ms;
+  --duration-standard: 240ms;
+  --ease-material: cubic-bezier(0.2, 0, 0, 1);
+}
+
+html {
+  background-color: var(--color-foundation-canvas);
+}
+
 body {
   background-color: var(--color-foundation-canvas);
   color: var(--color-foundation-ink);
+  min-width: 20rem;
+  overflow-x: hidden;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+a,
+button {
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-material);
 }
 
 @media (prefers-reduced-motion: reduce) {

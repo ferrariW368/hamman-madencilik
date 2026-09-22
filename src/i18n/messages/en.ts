@@ -1,2 +1,2 @@
 import type { Messages } from "./types";
-export const en: Messages = { foundation: { accessibleName: "HAMMARBLE" } };
+export const en: Messages = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Primary navigation", openMenuLabel: "Open menu", closeMenuLabel: "Close menu", languageLabel: "Language", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Stones", quarries: "Quarries", projects: "Projects", events: "Events", about: "About", contact: "Contact" }, footer: { copyright: "Copyright" } } };
