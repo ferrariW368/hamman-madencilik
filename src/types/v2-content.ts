@@ -1,0 +1,12 @@
+export type LocalizedString = Partial<Record<"tr" | "en" | "zh" | "ar", string>>;
+export type UsageRights = "OWNED" | "PERMITTED" | "UNKNOWN";
+export type AssetClass = "REAL" | "AI_GENERATED" | "TEMPORARY" | "ARCHIVE";
+export type AssetApprovalStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type MediaProvenance = { assetClass: AssetClass; source?: string; sourceDate?: string; provenanceNotes?: string; usageRights: UsageRights; rightsSource?: string; rightsNotes?: string; approvalStatus: AssetApprovalStatus };
+export type MediaAsset = { alt?: LocalizedString; provenance: MediaProvenance };
+export type TechnicalDatum = { key: string; label?: LocalizedString; canonicalValue?: number; canonicalUnit?: string; testMethod?: string; sourceDocumentId?: string };
+export type TechnicalSpecification = { technicalData: TechnicalDatum[]; sourceDocumentIds: string[] };
+export type Stone = { id: string; name: LocalizedString; slug: string; quarryId?: string; technicalSpecification?: TechnicalSpecification };
+export type Quarry = { id: string; name: LocalizedString; slug: string; coordinates?: { latitude: number; longitude: number }; stoneIds: string[] };
+export type Project = { id: string; name: LocalizedString; slug: string; stoneIds: string[]; scope?: LocalizedString };
+export type Event = { id: string; name: LocalizedString; slug: string; startDate?: string; endDate?: string };

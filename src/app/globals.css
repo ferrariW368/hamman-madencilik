@@ -1,18 +1,36 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-stone-cream: #FBFAF7;
-  --color-stone-ivory: #F5F2EC;
-  --color-stone-sand: #E8E2D6;
-  --color-stone-taupe: #C9BFA6;
-  --color-stone-ink: #2b2620;
-  --color-stone-bronze: #8a6f3a;
+  --color-foundation-canvas: #fbfaf7;
+  --color-foundation-surface: #f5f2ec;
+  --color-foundation-border: #e8e2d6;
+  --color-foundation-ink: #2b2620;
+  --color-foundation-accent: #8a6f3a;
+
+  /* Legacy routes still consume these aliases until their approved V2 replacement. */
+  --color-stone-cream: var(--color-foundation-canvas);
+  --color-stone-ivory: var(--color-foundation-surface);
+  --color-stone-sand: var(--color-foundation-border);
+  --color-stone-taupe: #c9bfa6;
+  --color-stone-ink: var(--color-foundation-ink);
+  --color-stone-bronze: var(--color-foundation-accent);
 
   --font-display: var(--font-playfair), Georgia, serif;
   --font-body: var(--font-inter), Arial, sans-serif;
 }
 
 body {
-  background-color: var(--color-stone-cream);
-  color: var(--color-stone-ink);
+  background-color: var(--color-foundation-canvas);
+  color: var(--color-foundation-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
