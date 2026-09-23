@@ -1,0 +1,11 @@
+import Link from "next/link";
+import type { PublishedLocale } from "@/i18n/config";
+import type { Messages } from "@/i18n/messages";
+import { Container } from "./Container";
+import { StoneMediaSwitcher } from "./StoneMediaSwitcher";
+
+function DetailSection({ title, children }: Readonly<{ title: string; children: React.ReactNode }>) { return <section className="border-t border-[color:var(--color-foundation-border)] py-8 md:py-10"><h2 className="font-[family-name:var(--font-display)] text-2xl text-[color:var(--color-foundation-ink)]">{title}</h2><div className="mt-4 max-w-[var(--container-reading)] text-sm leading-6 text-[color:var(--color-foundation-muted)]">{children}</div></section>; }
+
+export function StoneDetail({ locale, name, messages }: Readonly<{ locale: PublishedLocale; name: string; messages: Messages["stonesExperience"]["detail"] }>) {
+  return <main><Container className="py-12 md:py-20"><Link href={`/${locale}/stones`} className="inline-flex min-h-11 items-center text-xs font-medium tracking-[0.1em] text-[color:var(--color-foundation-muted)] hover:text-[color:var(--color-foundation-ink)]">← {messages.backToCollection}</Link><div className="mt-10 border-s-2 border-[color:var(--color-foundation-accent)] ps-5"><p className="text-xs font-medium tracking-[0.14em] text-[color:var(--color-foundation-muted)]">{messages.label}</p><h1 className="mt-4 font-[family-name:var(--font-display)] text-[length:var(--text-title)] text-[color:var(--color-foundation-ink)]">{name}</h1></div><div className="mt-12"><DetailSection title={messages.overview}><p>{messages.overviewPending}</p></DetailSection><StoneMediaSwitcher messages={messages} /><DetailSection title={messages.technical}><p>{messages.technicalPending}</p></DetailSection><DetailSection title={messages.quarry}><p>{messages.quarryPending}</p></DetailSection><DetailSection title={messages.documents}><p>{messages.documentsPending}</p></DetailSection><DetailSection title={messages.inquiry}><p>{messages.inquiryDescription}</p><Link href={`/${locale}/contact`} className="mt-5 inline-flex min-h-11 items-center border border-[color:var(--color-foundation-border)] px-4 text-xs font-medium tracking-[0.1em] text-[color:var(--color-foundation-ink)] hover:border-[color:var(--color-foundation-accent)]">{messages.inquiryLink}</Link></DetailSection></div></Container></main>;
+}

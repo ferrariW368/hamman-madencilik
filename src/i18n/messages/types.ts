@@ -20,4 +20,8 @@ export type Messages = {
     contact: { label: string; title: string; description: string };
     notFound: { label: string; title: string; description: string; homeLink: string };
   };
+  stonesExperience: {
+    collection: { label: string; title: string; description: string; pendingPortfolio: string; detailsLink: string; detailsPending: string; mediaPending: string };
+    detail: { label: string; overview: string; overviewPending: string; inspection: string; surface: string; block: string; mediaPending: string; technical: string; technicalPending: string; quarry: string; quarryPending: string; documents: string; documentsPending: string; inquiry: string; inquiryDescription: string; inquiryLink: string; backToCollection: string };
+  };
 };

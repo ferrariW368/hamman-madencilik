@@ -1,4 +1,8 @@
 import type { Messages } from "./types";
+export const enStonesExperience: Messages["stonesExperience"] = {
+  collection: { label: "Stones", title: "Stones", description: "The material portfolio will be published here as verified records become available.", pendingPortfolio: "Portfolio verification is in progress.", detailsLink: "Inspect material", detailsPending: "Details pending verification", mediaPending: "Verified material media is not yet available" },
+  detail: { label: "Stones", overview: "Material overview", overviewPending: "A verified description is not yet published.", inspection: "Surface inspection", surface: "Surface", block: "Block", mediaPending: "Verified media for this view is not yet published.", technical: "Technical information", technicalPending: "Verified technical information is not yet published.", quarry: "Quarry / source", quarryPending: "A verified quarry or source relationship is not yet published.", documents: "Documents", documentsPending: "Verified technical documents are not yet published.", inquiry: "Inquiry", inquiryDescription: "A direct inquiry path will be available here when verified contact channels are published.", inquiryLink: "Go to contact", backToCollection: "Back to stones" },
+};
 export const enSkeleton: Messages["skeleton"] = {
   home: { label: "HAMMARBLE", title: "HAMMARBLE", description: "The V2 home page structure is under development." },
   stones: { label: "Stones", title: "Stones", description: "The current portfolio and material details will be added after verification.", spiderLink: "Spider detail" },
@@ -10,4 +14,4 @@ export const enSkeleton: Messages["skeleton"] = {
   contact: { label: "Contact", title: "Contact", description: "Verified contact channels and the form system are not yet published." },
   notFound: { label: "404", title: "Page not found", description: "The requested V2 page could not be found.", homeLink: "Return home" },
 };
-export const en: Omit<Messages, "skeleton"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Primary navigation", openMenuLabel: "Open menu", closeMenuLabel: "Close menu", languageLabel: "Language", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Stones", quarries: "Quarries", projects: "Projects", events: "Events", about: "About", contact: "Contact" }, footer: { copyright: "Copyright" } } };
+export const en: Omit<Messages, "skeleton" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Primary navigation", openMenuLabel: "Open menu", closeMenuLabel: "Close menu", languageLabel: "Language", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Stones", quarries: "Quarries", projects: "Projects", events: "Events", about: "About", contact: "Contact" }, footer: { copyright: "Copyright" } } };
