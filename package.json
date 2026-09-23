@@ -8,6 +8,8 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
+    "verify:preview": "node scripts/verify-preview.mjs",
+    "preview:deploy:verify": "node scripts/verify-preview.mjs --deploy",
     "seed": "tsx scripts/seed-content.ts"
   },
   "dependencies": {
