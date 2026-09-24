@@ -14,4 +14,14 @@ export const enSkeleton: Messages["skeleton"] = {
   contact: { label: "Contact", title: "Contact", description: "Verified contact channels and the form system are not yet published." },
   notFound: { label: "404", title: "Page not found", description: "The requested V2 page could not be found.", homeLink: "Return home" },
 };
-export const en: Omit<Messages, "skeleton" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Primary navigation", openMenuLabel: "Open menu", closeMenuLabel: "Close menu", languageLabel: "Language", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Stones", quarries: "Quarries", projects: "Projects", events: "Events", about: "About", contact: "Contact" }, footer: { copyright: "Copyright" } } };
+export const enHomeBody: Messages["homeBody"] = {
+  sections: [
+    { key: "stones", label: "01", title: "Stones", description: "Review verified material records and the Spider detail route.", linkLabel: "Explore stones" },
+    { key: "quarries", label: "02", title: "Quarries", description: "Verified quarry locations and material relationships will appear here when published.", linkLabel: "Go to quarries" },
+    { key: "projects", label: "03", title: "Projects", description: "References will be published after their scopes are verified.", linkLabel: "Go to projects" },
+    { key: "events", label: "04", title: "Events", description: "Event records will appear here with verified dates and media.", linkLabel: "Go to events" },
+    { key: "about", label: "05", title: "Heritage", description: "Company history will be published when verified source material is ready.", linkLabel: "Go to about" },
+    { key: "contact", label: "06", title: "Contact", description: "A direct path will be available here when verified contact channels are published.", linkLabel: "Go to contact" },
+  ],
+};
+export const en: Omit<Messages, "skeleton" | "homeBody" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Primary navigation", openMenuLabel: "Open menu", closeMenuLabel: "Close menu", languageLabel: "Language", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Stones", quarries: "Quarries", projects: "Projects", events: "Events", about: "About", contact: "Contact" }, footer: { copyright: "Copyright" } } };

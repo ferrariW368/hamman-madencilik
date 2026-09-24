@@ -14,4 +14,14 @@ export const trSkeleton: Messages["skeleton"] = {
   contact: { label: "İletişim", title: "İletişim", description: "Doğrulanmış iletişim kanalları ve form altyapısı henüz yayında değildir." },
   notFound: { label: "404", title: "Sayfa bulunamadı", description: "İstediğiniz V2 sayfası bulunamadı.", homeLink: "Ana sayfaya dön" },
 };
-export const tr: Omit<Messages, "skeleton" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Ana menü", openMenuLabel: "Menüyü aç", closeMenuLabel: "Menüyü kapat", languageLabel: "Dil", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Taşlar", quarries: "Ocaklar", projects: "Projeler", events: "Etkinlikler", about: "Hakkımızda", contact: "İletişim" }, footer: { copyright: "Telif hakkı" } } };
+export const trHomeBody: Messages["homeBody"] = {
+  sections: [
+    { key: "stones", label: "01", title: "Taşlar", description: "Doğrulanan malzeme kayıtlarını ve Spider ayrıntı rotasını inceleyin.", linkLabel: "Taşları incele" },
+    { key: "quarries", label: "02", title: "Ocaklar", description: "Doğrulanmış ocak konumları ve malzeme ilişkileri yayımlandığında burada yer alacaktır.", linkLabel: "Ocaklar alanına git" },
+    { key: "projects", label: "03", title: "Projeler", description: "Referanslar, kapsamları doğrulandıktan sonra yayımlanacaktır.", linkLabel: "Projeler alanına git" },
+    { key: "events", label: "04", title: "Etkinlikler", description: "Doğrulanmış tarih ve medya ile etkinlik kayıtları burada yer alacaktır.", linkLabel: "Etkinlikler alanına git" },
+    { key: "about", label: "05", title: "Miras", description: "Kurumsal tarihçe, doğrulanmış kaynaklar hazır olduğunda yayımlanacaktır.", linkLabel: "Hakkımızda alanına git" },
+    { key: "contact", label: "06", title: "İletişim", description: "Doğrulanmış iletişim kanalları yayımlandığında doğrudan iletişim burada kurulacaktır.", linkLabel: "İletişim alanına git" },
+  ],
+};
+export const tr: Omit<Messages, "skeleton" | "homeBody" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Ana menü", openMenuLabel: "Menüyü aç", closeMenuLabel: "Menüyü kapat", languageLabel: "Dil", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Taşlar", quarries: "Ocaklar", projects: "Projeler", events: "Etkinlikler", about: "Hakkımızda", contact: "İletişim" }, footer: { copyright: "Telif hakkı" } } };
