@@ -32,9 +32,8 @@ The script uses `npx vercel curl`, so Vercel Deployment Protection is handled by
 
 ## GitHub Actions
 
-No workflow is included yet. The repository is locally linked to Vercel, but `redesign/v2` is not present on the GitHub remote, and the inspected preview deployment did not expose Git commit metadata. A reliable remote workflow requires both:
+`.github/workflows/verify-v2-preview.yml` runs on every `redesign/v2` push. It queries Vercel for the deployment whose `githubCommitSha` matches the pushed commit, waits until that Preview is Ready, then runs this verifier against the returned URL.
 
-1. Push `redesign/v2`, then confirm the Vercel project is connected to `ferrariW368/hamman-madencilik` and creates preview deployments for its pushes.
-2. Add a GitHub Actions secret with a Vercel token permitted for this project (and, if Deployment Protection requires it, an approved non-logged protection strategy).
+The GitHub repository must contain the `VERCEL_TOKEN` Actions secret. The workflow reads it only as an environment variable; it is never written to the repository or logs.
 
-After that confirmation, a workflow can use the Vercel deployment URL from the deployment status/event and run this same script; no preview URL discovery should be guessed from branch names.
+The workflow does not deploy production and does not infer a Preview URL from a branch name.
