@@ -539,3 +539,15 @@ Reason: The current public website and repository contain no verified quarry rec
 Rejected: Level A rich quarry experience, Level B map/profile treatment, or inferred quarry locations from legacy/public copy.
 
 Status: LOCKED TEMPORARY; revisit only after verified quarry material passes STEP 10 intake.
+
+
+
+## D-037 — Corporate No-Material Fallback
+
+Decision: Until project, event, corporate-history and contact records are VERIFIED, the V2 Projects, Events, About and Contact routes remain locale-aware truthful placeholder screens. No public-site copy, project imagery, event imagery, contact address, contact channel or contact form delivery path is promoted into V2.
+
+Reason: The current intake has no verified project/event/history material, and the existing public site contains conflicting contact-address candidates. A visible form without a confirmed delivery, anti-spam and legal path would be misleading.
+
+Rejected: Migrating generic legacy claims, publishing unverified contact details, or presenting a UI-only contact form as a working conversion path.
+
+Status: LOCKED TEMPORARY; revisit each area only when its STEP 10 record is VERIFIED.
