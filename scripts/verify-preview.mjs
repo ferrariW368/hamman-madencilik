@@ -60,8 +60,14 @@ const routes = [
   { path: "/", status: 307, headers: [["Location is /tr", (headers) => /^location:\s*\/tr\s*$/im.test(headers)]] },
   localized("tr", "/tr", "V2 ana sayfa yapısı geliştirme aşamasındadır."),
   localized("en", "/en", "The V2 home page structure is under development."),
-  localized("tr", "/tr/quarries", "Ocak bilgileri doğrulanmış konum ve malzeme ilişkileri ile eklenecektir."),
-  localized("en", "/en/quarries", "Quarry information will be added with verified locations and stone relationships."),
+  {
+    ...localized("tr", "/tr/quarries", "Ocak bilgileri doğrulanmış konum ve malzeme ilişkileri ile eklenecektir."),
+    checks: [...localized("tr", "/tr/quarries", "Ocak bilgileri doğrulanmış konum ve malzeme ilişkileri ile eklenecektir.").checks, ["Beyşehir/Konya city-level source area is rendered", (html) => html.includes("Beyşehir / Konya, Türkiye")], ["no map navigation is exposed", (html) => !html.includes("google.com/maps") && !html.includes("maps.google.com")]],
+  },
+  {
+    ...localized("en", "/en/quarries", "Quarry information will be added with verified locations and stone relationships."),
+    checks: [...localized("en", "/en/quarries", "Quarry information will be added with verified locations and stone relationships.").checks, ["Beyşehir/Konya city-level source area is rendered", (html) => html.includes("Beyşehir / Konya, Türkiye")], ["no map navigation is exposed", (html) => !html.includes("google.com/maps") && !html.includes("maps.google.com")]],
+  },
   localized("tr", "/tr/projects", "Proje referansları ve kapsamları doğrulandıktan sonra eklenecektir."),
   localized("en", "/en/projects", "Project references and scopes will be added after verification."),
   localized("tr", "/tr/events", "Etkinlik kayıtları doğrulanmış tarih ve medya ile eklenecektir."),

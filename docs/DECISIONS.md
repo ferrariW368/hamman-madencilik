@@ -532,9 +532,9 @@ Status: LOCKED.
 
 ## D-036 — Quarry No-Material Fallback
 
-Decision: Until a quarry identity, location or coordinates, stone relationship, media provenance and publication rights are VERIFIED, V2 uses the Level C fallback: a clean locale-aware quarry route with no map, pin, navigation destination or factual quarry listing.
+Decision: Until a quarry identity, exact location/coordinates, stone relationship, media provenance and publication rights are VERIFIED, V2 uses the Level C fallback. The route may show the user-approved city-level source area Beyşehir / Konya, Türkiye, but has no map, pin, navigation destination or factual quarry listing.
 
-Reason: The current public website and repository contain no verified quarry record suitable for V2 publication. A map or location treatment would create a factual claim that cannot yet be supported.
+Reason: The user approved Beyşehir / Konya, Türkiye only at city level on 2026-09-24. The current public website and repository still contain no verified quarry identity or exact location suitable for V2 publication. A map or location treatment would create a factual claim that cannot yet be supported.
 
 Rejected: Level A rich quarry experience, Level B map/profile treatment, or inferred quarry locations from legacy/public copy.
 

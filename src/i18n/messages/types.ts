@@ -13,7 +13,7 @@ export type Messages = {
     home: { label: string; title: string; description: string };
     stones: { label: string; title: string; description: string; spiderLink: string };
     spider: { label: string; title: string; description: string; availabilityNotice: string; backToStones: string; contactLink: string };
-    quarries: { label: string; title: string; description: string };
+    quarries: { label: string; title: string; description: string; regionLabel: string; region: string; detailsPending: string };
     projects: { label: string; title: string; description: string };
     events: { label: string; title: string; description: string };
     about: { label: string; title: string; description: string };

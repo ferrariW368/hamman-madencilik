@@ -7,7 +7,7 @@ export const enSkeleton: Messages["skeleton"] = {
   home: { label: "HAMMARBLE", title: "HAMMARBLE", description: "The V2 home page structure is under development." },
   stones: { label: "Stones", title: "Stones", description: "The current portfolio and material details will be added after verification.", spiderLink: "Spider detail" },
   spider: { label: "Stones", title: "Spider", description: "This is a neutral development-only detail route placeholder.", availabilityNotice: "Imagery, technical data, origin and sales information are not yet published.", backToStones: "Back to stones", contactLink: "Go to contact" },
-  quarries: { label: "Quarries", title: "Quarries", description: "Quarry information will be added with verified locations and stone relationships." },
+  quarries: { label: "Quarries", title: "Quarries", description: "Quarry information will be added with verified locations and stone relationships.", regionLabel: "Approved city-level source area", region: "Beyşehir / Konya, Türkiye", detailsPending: "Quarry identity, exact location/coordinates, stone relationship and navigation destination are pending verification." },
   projects: { label: "Projects", title: "Projects", description: "Project references and scopes will be added after verification." },
   events: { label: "Events", title: "Events", description: "Event records will be added with verified dates and media." },
   about: { label: "About", title: "About", description: "Company history and information will be added after verification." },

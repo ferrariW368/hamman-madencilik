@@ -98,15 +98,19 @@ Need:
 
 ### Beyşehir / Konya
 
-Status: PENDING FOR PUBLICATION
+Status: PARTIALLY VERIFIED — city-level display approved by Eren on 2026-09-24
+
+Verified for V2:
+
+\- city-level source area: Beyşehir / Konya, Türkiye
+
+Still required before quarry publication or navigation:
 
 
 
 Need:
 
 \- official quarry identity
-
-\- exact city/country
 
 \- exact verified location/coordinates
 
