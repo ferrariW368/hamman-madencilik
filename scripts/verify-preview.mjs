@@ -93,7 +93,8 @@ function request(path) {
 
 console.log(`Preview verification: ${preview}`);
 let failures = 0;
-const results = await Promise.all(routes.map(async (route) => {
+const results = [];
+for (const route of routes) {
   try {
     const response = await request(route.path);
     const assertions = [
@@ -102,11 +103,11 @@ const results = await Promise.all(routes.map(async (route) => {
       ...(route.checks ?? []).map(([label, check]) => [label, () => check(response.body)]),
     ];
     const failed = assertions.filter(([, check]) => !check());
-    return failed.length ? { route, response, failed } : { route, response, failed: [] };
+    results.push(failed.length ? { route, response, failed } : { route, response, failed: [] });
   } catch (error) {
-    return { route, error };
+    results.push({ route, error });
   }
-}));
+}
 
 for (const result of results) {
   if (result.error) {
