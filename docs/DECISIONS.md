@@ -527,3 +527,15 @@ Rejected: Installing libraries speculatively during foundation work.
 
 
 Status: LOCKED.
+
+
+
+## D-036 — Quarry No-Material Fallback
+
+Decision: Until a quarry identity, location or coordinates, stone relationship, media provenance and publication rights are VERIFIED, V2 uses the Level C fallback: a clean locale-aware quarry route with no map, pin, navigation destination or factual quarry listing.
+
+Reason: The current public website and repository contain no verified quarry record suitable for V2 publication. A map or location treatment would create a factual claim that cannot yet be supported.
+
+Rejected: Level A rich quarry experience, Level B map/profile treatment, or inferred quarry locations from legacy/public copy.
+
+Status: LOCKED TEMPORARY; revisit only after verified quarry material passes STEP 10 intake.

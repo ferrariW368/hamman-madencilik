@@ -60,6 +60,8 @@ const routes = [
   { path: "/", status: 307, headers: [["Location is /tr", (headers) => /^location:\s*\/tr\s*$/im.test(headers)]] },
   localized("tr", "/tr", "V2 ana sayfa yapısı geliştirme aşamasındadır."),
   localized("en", "/en", "The V2 home page structure is under development."),
+  localized("tr", "/tr/quarries", "Ocak bilgileri doğrulanmış konum ve malzeme ilişkileri ile eklenecektir."),
+  localized("en", "/en/quarries", "Quarry information will be added with verified locations and stone relationships."),
   { path: "/tr/preview-verification-missing", status: 404, checks: [["TR localized V2 404 is selected", (html) => html.includes("V2LocalizedNotFound") && html.includes("V2Header") && html.includes('"locale\\":\\"tr\\"')]] },
   { path: "/en/preview-verification-missing", status: 404, checks: [["EN localized V2 404 is selected", (html) => html.includes("V2LocalizedNotFound") && html.includes("V2Header") && html.includes('"locale\\":\\"en\\"')]] },
   { ...localized("tr", "/tr/stones", "Spider"), checks: [...localized("tr", "/tr/stones", "Spider").checks, ...metadata("/tr/stones", "tr")] },
