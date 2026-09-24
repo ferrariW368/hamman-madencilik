@@ -457,3 +457,23 @@ Before release, every production media file must answer:
 
 
 If any required answer is unknown, keep the asset out of production.
+
+## Existing Public Website Candidates — 2026-09-24
+
+Source: https://www.hammanmadencilik.com/
+
+Status: PENDING — source audit only; no files were downloaded or copied into this repository.
+
+| Candidate group | Class | Provenance | usage_rights | Approval | Master location | V2 use |
+| --- | --- | --- | --- | --- | --- | --- |
+| Gallery images labelled `granit` through `granit-6` | ARCHIVE | Existing public website; original creator and capture context unknown | UNKNOWN | PENDING | Unknown; publicly served derivative only | Do not use |
+| Logo images labelled `hamman_logo_B` and `hamman_logo_1` through `hamman_logo_5` | ARCHIVE | Existing public website; source/vector master unknown | UNKNOWN | PENDING | Unknown; publicly served derivative only | Do not use |
+| Homepage/service/product-page images | ARCHIVE | Existing public website; subject, creator and original files unknown | UNKNOWN | PENDING | Unknown; publicly served derivative only | Do not use |
+
+Required before any V2 use:
+
+\- original/master file or approved web derivative
+\- source and provenance confirmation
+\- publication-rights evidence from HAMMARBLE
+\- subject/stone/quarry/project identification where the image represents a company fact
+\- explicit approval status = APPROVED

@@ -433,3 +433,23 @@ No agent may invent a deadline.
 \- unverified locations
 
 \- publication rights that have not been confirmed
+
+## Existing Public Website Intake — 2026-09-24
+
+Status: PENDING — current public website is a candidate source only. Its copy, contact data and media must not be treated as VERIFIED without company confirmation.
+
+Source: https://www.hammanmadencilik.com/
+
+Observed candidate information:
+
+\- The public site presents Hamman Madencilik as a marble/natural-stone quarry operator and includes generic block, slab, tile and custom-marble product pages.
+\- Spider is not named, and the public site does not provide Spider surface/block media, a verified quarry relationship, technical values or technical reports.
+\- No verified quarry identity, coordinates, project scope, event record or corporate-history detail was found for V2 use.
+\- The public homepage lists a Beyşehir / Konya address, while its contact page lists a Konyaaltı / Antalya address. Treat both as conflicting candidates; neither may be published in V2 until the company confirms the current address.
+\- The same public source displays a phone number and info@hammanmadencilik.com.tr, but both remain PENDING until current sales/export contact details are confirmed.
+
+V2 handling:
+
+\- Do not migrate generic claims, logistics claims, product claims or technical attributes from the existing public site.
+\- Do not use its imagery or logo files until provenance and publication permission are recorded in docs/ASSETS.md.
+\- Keep V2's block-sales direction and truthful temporary states until verified company material arrives.
