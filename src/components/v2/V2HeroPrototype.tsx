@@ -15,7 +15,7 @@ export function V2HeroPrototype({ locale, title, content }: Readonly<{ locale: P
           <div>
             <p className="text-xs tracking-[0.12em] text-white/70">{content.status}</p>
             <p className="mt-2 max-w-xs text-[0.65rem] leading-4 tracking-[0.08em] text-white/60">{content.imageDisclosure}</p>
-            <h1 id="v2-hero-title" className="mt-4 font-[family-name:var(--font-display)] text-[length:var(--text-display)] tracking-[0.12em]">{title}</h1>
+            <h1 id="v2-hero-title" className="mt-4 font-[family-name:var(--font-display)] text-[clamp(2.25rem,4.6vw,4.25rem)] leading-none tracking-[0.08em]">{title}</h1>
           </div>
         </div>
       </div>
