@@ -59,12 +59,12 @@ const metadata = (path, locale) => [
 const routes = [
   { path: "/", status: 307, headers: [["Location is /tr", (headers) => /^location:\s*\/tr\s*$/im.test(headers)]] },
   {
-    ...localized("tr", "/tr", "V2 ana sayfa yapısı geliştirme aşamasındadır."),
-    checks: [...localized("tr", "/tr", "V2 ana sayfa yapısı geliştirme aşamasındadır.").checks, ["demo hero status is rendered", (html) => html.includes("DEMO — doğrulanmış şirket görüntüsü kullanılmıyor")], ["hero does not imply verified footage", (html) => !html.includes("<video")]],
+    ...localized("tr", "/tr", "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor"),
+    checks: [...localized("tr", "/tr", "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor").checks, ["hero does not imply verified footage", (html) => !html.includes("<video")]],
   },
   {
-    ...localized("en", "/en", "The V2 home page structure is under development."),
-    checks: [...localized("en", "/en", "The V2 home page structure is under development.").checks, ["demo hero status is rendered", (html) => html.includes("DEMO — no verified company footage is in use")], ["hero does not imply verified footage", (html) => !html.includes("<video")]],
+    ...localized("en", "/en", "DEMO — no verified company footage is in use"),
+    checks: [...localized("en", "/en", "DEMO — no verified company footage is in use").checks, ["hero does not imply verified footage", (html) => !html.includes("<video")]],
   },
   {
     ...localized("tr", "/tr/quarries", "Ocak bilgileri doğrulanmış konum ve malzeme ilişkileri ile eklenecektir."),
