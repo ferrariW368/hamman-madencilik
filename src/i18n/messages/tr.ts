@@ -28,6 +28,8 @@ export const trHeroPrototype: Messages["heroPrototype"] = {
   eyebrow: "HAMMARBLE / WEB PROTOTYPE",
   description: "Sinematik açılışın medya bağımsız prototipi. Onaylı kaynak görüntüleri geldiğinde bu yapı gerçek görüntülerle güncellenecektir.",
   status: "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor",
+  imageDisclosure: "AI-GENERATED konsept görsel — HAMMARBLE ocağını temsil etmez",
+  imageAlt: "Yapay zekâ ile üretilmiş taş ocağı konsept görseli",
   exploreStones: "Taş alanını aç",
   stages: [
     { label: "01", title: "Kaynak" },

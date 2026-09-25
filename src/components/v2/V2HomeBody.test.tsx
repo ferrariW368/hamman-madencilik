@@ -12,5 +12,7 @@ describe("V2HomeBody", () => {
     expect(screen.getByRole("link", { name: "Taşları incele" })).toHaveAttribute("href", "/tr/stones");
     expect(screen.getByRole("link", { name: "İletişim alanına git" })).toHaveAttribute("href", "/tr/contact");
     expect(screen.getByText("DEMO — doğrulanmış şirket görüntüsü kullanılmıyor")).toBeInTheDocument();
+    expect(screen.getByText("AI-GENERATED konsept görsel — HAMMARBLE ocağını temsil etmez")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Yapay zekâ ile üretilmiş taş ocağı konsept görseli" })).toHaveAttribute("src", expect.stringContaining("ai-hero-quarry-concept-01.png"));
   });
 });

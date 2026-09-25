@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { PublishedLocale } from "@/i18n/config";
 import type { Messages } from "@/i18n/messages";
 import { Container } from "./Container";
@@ -7,13 +8,13 @@ export function V2HeroPrototype({ locale, title, content }: Readonly<{ locale: P
   return <section className="border-b border-[color:var(--color-foundation-border)] bg-[color:var(--color-foundation-ink)] text-[color:var(--color-foundation-canvas)]" aria-labelledby="v2-hero-title">
     <Container className="grid min-h-[34rem] items-end gap-10 py-12 md:min-h-[42rem] md:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)] md:py-16">
       <div className="relative overflow-hidden border border-white/20 bg-[#3a372e] p-6 md:p-10">
-        <div className="absolute inset-x-0 top-0 h-1/3 border-b border-white/15 bg-[#504a3d]" aria-hidden="true" />
-        <div className="absolute bottom-0 left-[12%] h-[58%] w-[33%] border border-white/15 bg-[#282720]" aria-hidden="true" />
-        <div className="absolute bottom-0 right-[9%] h-[42%] w-[43%] border border-white/15 bg-[#625b4a]" aria-hidden="true" />
+        <Image src="/media/ai/ai-hero-quarry-concept-01.png" alt={content.imageAlt} fill priority sizes="(min-width: 768px) 55vw, 100vw" className="object-cover opacity-70" />
+        <div className="absolute inset-0 bg-black/30" aria-hidden="true" />
         <div className="relative flex min-h-[25rem] flex-col justify-between md:min-h-[31rem]">
           <p className="text-xs font-medium tracking-[0.14em] text-white/70">{content.eyebrow}</p>
           <div>
             <p className="text-xs tracking-[0.12em] text-white/70">{content.status}</p>
+            <p className="mt-2 max-w-xs text-[0.65rem] leading-4 tracking-[0.08em] text-white/60">{content.imageDisclosure}</p>
             <h1 id="v2-hero-title" className="mt-4 font-[family-name:var(--font-display)] text-[length:var(--text-display)] tracking-[0.12em]">{title}</h1>
           </div>
         </div>

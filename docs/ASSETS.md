@@ -194,6 +194,23 @@ Production use requires:
 
 ## Current Intake
 
+### AI Hero Concept — ai-hero-quarry-concept-01.png
+
+Status: PENDING — Preview-only demo asset.
+
+\- filename: ai-hero-quarry-concept-01.png
+\- subject: stylized quarry and raw stone-block concept
+\- class: AI-GENERATED
+\- source: OpenAI image generation via Codex, 2026-09-25
+\- provenance notes: deliberately non-documentary concept image; it must not represent a HAMMARBLE quarry, stone or location
+\- usage_rights: UNKNOWN
+\- rights_source / evidence: not recorded for production use
+\- approval status: PENDING
+\- master location: C:\\Users\\muham\\.codex\\generated_images\\01a0d049-b449-7042-8a25-6fb17edc7ac2\\exec-d846e161-6093-44c6-9368-ccada6f0ad63.png
+\- web derivative: public/media/ai/ai-hero-quarry-concept-01.png
+\- used in: V2 Preview Hero only
+\- restrictions: visible AI-GENERATED disclosure is required; do not deploy to production or use as documentary/company evidence
+
 
 
 ### Spider

@@ -27,6 +27,8 @@ export type Messages = {
     eyebrow: string;
     description: string;
     status: string;
+    imageDisclosure: string;
+    imageAlt: string;
     exploreStones: string;
     stages: readonly { label: string; title: string }[];
   };

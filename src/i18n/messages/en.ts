@@ -28,6 +28,8 @@ export const enHeroPrototype: Messages["heroPrototype"] = {
   eyebrow: "HAMMARBLE / WEB PROTOTYPE",
   description: "A media-independent prototype for the cinematic opening. This structure will be updated with approved source footage when it is available.",
   status: "DEMO — no verified company footage is in use",
+  imageDisclosure: "AI-GENERATED concept visual — does not represent a HAMMARBLE quarry",
+  imageAlt: "AI-generated quarry concept visual",
   exploreStones: "Open stones",
   stages: [
     { label: "01", title: "Source" },
