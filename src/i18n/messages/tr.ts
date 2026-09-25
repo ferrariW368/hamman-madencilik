@@ -24,4 +24,18 @@ export const trHomeBody: Messages["homeBody"] = {
     { key: "contact", label: "06", title: "İletişim", description: "Doğrulanmış iletişim kanalları yayımlandığında doğrudan iletişim burada kurulacaktır.", linkLabel: "İletişim alanına git" },
   ],
 };
-export const tr: Omit<Messages, "skeleton" | "homeBody" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Ana menü", openMenuLabel: "Menüyü aç", closeMenuLabel: "Menüyü kapat", languageLabel: "Dil", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Taşlar", quarries: "Ocaklar", projects: "Projeler", events: "Etkinlikler", about: "Hakkımızda", contact: "İletişim" }, footer: { copyright: "Telif hakkı" } } };
+export const trHeroPrototype: Messages["heroPrototype"] = {
+  eyebrow: "HAMMARBLE / WEB PROTOTYPE",
+  description: "Sinematik açılışın medya bağımsız prototipi. Onaylı kaynak görüntüleri geldiğinde bu yapı gerçek görüntülerle güncellenecektir.",
+  status: "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor",
+  exploreStones: "Taş alanını aç",
+  stages: [
+    { label: "01", title: "Kaynak" },
+    { label: "02", title: "Yaklaşım" },
+    { label: "03", title: "Çıkarım" },
+    { label: "04", title: "Hareket" },
+    { label: "05", title: "Duraklama" },
+    { label: "06", title: "HAMMARBLE" },
+  ],
+};
+export const tr: Omit<Messages, "skeleton" | "homeBody" | "heroPrototype" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Ana menü", openMenuLabel: "Menüyü aç", closeMenuLabel: "Menüyü kapat", languageLabel: "Dil", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Taşlar", quarries: "Ocaklar", projects: "Projeler", events: "Etkinlikler", about: "Hakkımızda", contact: "İletişim" }, footer: { copyright: "Telif hakkı" } } };

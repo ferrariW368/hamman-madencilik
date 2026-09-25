@@ -23,6 +23,13 @@ export type Messages = {
   homeBody: {
     sections: readonly { key: "stones" | "quarries" | "projects" | "events" | "about" | "contact"; label: string; title: string; description: string; linkLabel: string }[];
   };
+  heroPrototype: {
+    eyebrow: string;
+    description: string;
+    status: string;
+    exploreStones: string;
+    stages: readonly { label: string; title: string }[];
+  };
   stonesExperience: {
     collection: { label: string; title: string; description: string; pendingPortfolio: string; detailsLink: string; detailsPending: string; mediaPending: string };
     detail: { label: string; overview: string; overviewPending: string; inspection: string; surface: string; block: string; mediaPending: string; technical: string; technicalPending: string; quarry: string; quarryPending: string; documents: string; documentsPending: string; inquiry: string; inquiryDescription: string; inquiryLink: string; backToCollection: string };

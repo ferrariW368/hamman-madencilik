@@ -6,10 +6,11 @@ import { V2HomeBody } from "./V2HomeBody";
 describe("V2HomeBody", () => {
   it("keeps the locked Home Body order and locale-aware destinations", () => {
     const messages = getMessages("tr");
-    render(<V2HomeBody locale="tr" content={messages.skeleton.home} sections={messages.homeBody.sections} />);
+    render(<V2HomeBody locale="tr" content={messages.skeleton.home} hero={messages.heroPrototype} sections={messages.homeBody.sections} />);
 
     expect(screen.getAllByRole("heading", { level: 2 }).map((heading) => heading.textContent)).toEqual(["Taşlar", "Ocaklar", "Projeler", "Etkinlikler", "Miras", "İletişim"]);
     expect(screen.getByRole("link", { name: "Taşları incele" })).toHaveAttribute("href", "/tr/stones");
     expect(screen.getByRole("link", { name: "İletişim alanına git" })).toHaveAttribute("href", "/tr/contact");
+    expect(screen.getByText("DEMO — doğrulanmış şirket görüntüsü kullanılmıyor")).toBeInTheDocument();
   });
 });

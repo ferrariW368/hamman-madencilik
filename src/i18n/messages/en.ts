@@ -24,4 +24,18 @@ export const enHomeBody: Messages["homeBody"] = {
     { key: "contact", label: "06", title: "Contact", description: "A direct path will be available here when verified contact channels are published.", linkLabel: "Go to contact" },
   ],
 };
-export const en: Omit<Messages, "skeleton" | "homeBody" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Primary navigation", openMenuLabel: "Open menu", closeMenuLabel: "Close menu", languageLabel: "Language", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Stones", quarries: "Quarries", projects: "Projects", events: "Events", about: "About", contact: "Contact" }, footer: { copyright: "Copyright" } } };
+export const enHeroPrototype: Messages["heroPrototype"] = {
+  eyebrow: "HAMMARBLE / WEB PROTOTYPE",
+  description: "A media-independent prototype for the cinematic opening. This structure will be updated with approved source footage when it is available.",
+  status: "DEMO — no verified company footage is in use",
+  exploreStones: "Open stones",
+  stages: [
+    { label: "01", title: "Source" },
+    { label: "02", title: "Approach" },
+    { label: "03", title: "Extraction" },
+    { label: "04", title: "Movement" },
+    { label: "05", title: "Pause" },
+    { label: "06", title: "HAMMARBLE" },
+  ],
+};
+export const en: Omit<Messages, "skeleton" | "homeBody" | "heroPrototype" | "stonesExperience"> = { foundation: { accessibleName: "HAMMARBLE", navigationLabel: "Primary navigation", openMenuLabel: "Open menu", closeMenuLabel: "Close menu", languageLabel: "Language", localeNames: { tr: "Türkçe", en: "English" }, navigation: { stones: "Stones", quarries: "Quarries", projects: "Projects", events: "Events", about: "About", contact: "Contact" }, footer: { copyright: "Copyright" } } };
