@@ -6,14 +6,21 @@ vi.mock("./client", () => ({
   client: { fetch: vi.fn() },
 }));
 
+// Sanity's production fetch overloads expect transport metadata. The mocked
+// boundary returns the domain values consumed by these query helpers instead.
+const fetchMock = vi.mocked(client.fetch) as unknown as {
+  mockReset: () => void;
+  mockResolvedValueOnce: (value: unknown) => void;
+};
+
 describe("queries", () => {
   beforeEach(() => {
-    vi.mocked(client.fetch).mockReset();
+    fetchMock.mockReset();
   });
 
   it("getHizmetler returns the fetched list", async () => {
     const fake = [{ _id: "1", baslik: "Test Hizmet", aciklama: "...", gorselUrl: null, sira: 1 }];
-    vi.mocked(client.fetch).mockResolvedValueOnce(fake);
+    fetchMock.mockResolvedValueOnce(fake);
 
     const result = await getHizmetler();
 
@@ -25,7 +32,7 @@ describe("queries", () => {
 
   it("getUrunler returns the fetched list", async () => {
     const fake = [{ _id: "1", baslik: "Blok Mermer", detaylar: "...", kullanimAlani: null, gorselUrl: null, sira: 1 }];
-    vi.mocked(client.fetch).mockResolvedValueOnce(fake);
+    fetchMock.mockResolvedValueOnce(fake);
 
     const result = await getUrunler();
 
@@ -43,7 +50,7 @@ describe("queries", () => {
       sertifikalar: ["Sertifika 1"],
       ekipMetni: "Test ekip metni",
     };
-    vi.mocked(client.fetch).mockResolvedValueOnce(fake);
+    fetchMock.mockResolvedValueOnce(fake);
 
     const result = await getSirketBilgisi();
 
@@ -59,7 +66,7 @@ describe("queries", () => {
       telefon: "555-1234",
       eposta: "test@example.com",
     };
-    vi.mocked(client.fetch).mockResolvedValueOnce(fake);
+    fetchMock.mockResolvedValueOnce(fake);
 
     const result = await getIletisimBilgisi();
 
