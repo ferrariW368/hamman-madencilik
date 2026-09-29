@@ -211,6 +211,23 @@ Status: PENDING — Preview-only demo asset.
 \- used in: V2 Preview Hero only
 \- restrictions: visible AI-GENERATED disclosure is required; do not deploy to production or use as documentary/company evidence
 
+### HAMMARBLE Quarry Reference — user supplied 2026-09-29
+
+Status: APPROVED — permitted visual reference for AI-assisted Hero development.
+
+\- filename: codex-clipboard-4af48dd2-c6ed-4be4-b9f5-f1498c3df179.png
+\- subject: original HAMMARBLE quarry overview supplied by the project owner
+\- class: ORIGINAL COMPANY REFERENCE
+\- source: project owner upload, 2026-09-29
+\- provenance notes: project owner confirms it is an original quarry photograph and authorizes publication plus AI-reference use
+\- usage_rights: PERMITTED
+\- rights_source / evidence: project owner confirmation in this work thread, 2026-09-29
+\- approval status: APPROVED for reference and publication
+\- SHA-256: EEFCA14C020027E53FEC5AA34E43711CEA430346BE45E62CCD11C8518A8911D4
+\- master location: C:\\Users\\muham\\AppData\\Local\\Temp\\codex-clipboard-4af48dd2-c6ed-4be4-b9f5-f1498c3df179.png
+\- used in: STEP 14 cinematic Hero reference input; not yet embedded in V2
+\- restrictions: use for visual continuity only. Do not reproduce readable site text, warnings, vehicle/company marks, or any unverified operational claim in generated media.
+
 
 
 ### Spider
