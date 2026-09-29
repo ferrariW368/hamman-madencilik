@@ -54,6 +54,80 @@ button {
   transition-timing-function: var(--ease-material);
 }
 
+/* STEP 13 web prototype: a single controlled opening sequence, not a video substitute. */
+@keyframes v2-hero-poster-settle {
+  from {
+    opacity: 0.45;
+    transform: scale(1.08) translate3d(-1.25%, -0.75%, 0);
+  }
+
+  to {
+    opacity: 0.7;
+    transform: scale(1.01) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes v2-hero-reveal {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes v2-hero-scrim-settle {
+  from {
+    opacity: 0.75;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.v2-hero__poster {
+  animation: v2-hero-poster-settle 4.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: 52% 48%;
+}
+
+.v2-hero__scrim {
+  animation: v2-hero-scrim-settle 1.2s ease-out both;
+}
+
+.v2-hero__eyebrow,
+.v2-hero__identity,
+.v2-hero__copy,
+.v2-hero__stage {
+  animation: v2-hero-reveal 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.v2-hero__identity {
+  animation-delay: 140ms;
+}
+
+.v2-hero__copy {
+  animation-delay: 220ms;
+}
+
+.v2-hero__stage:nth-child(1) { animation-delay: 360ms; }
+.v2-hero__stage:nth-child(2) { animation-delay: 420ms; }
+.v2-hero__stage:nth-child(3) { animation-delay: 480ms; }
+.v2-hero__stage:nth-child(4) { animation-delay: 540ms; }
+.v2-hero__stage:nth-child(5) { animation-delay: 600ms; }
+.v2-hero__stage:nth-child(6) { animation-delay: 660ms; }
+
+.v2-hero__cta {
+  transition-property: color, border-color, transform;
+}
+
+.v2-hero__cta:hover {
+  transform: translateX(0.2rem);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

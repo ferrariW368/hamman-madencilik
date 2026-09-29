@@ -19,6 +19,14 @@ Purpose: define the controlled cinematic sequence after the STEP 13 web prototyp
 | --- | --- | --- | --- |
 | public/media/ai/ai-hero-quarry-concept-01.png | Static poster behind the Hero copy | AI-GENERATED | Preview-only, visible disclosure required, not a HAMMARBLE quarry or stone, not for production |
 
+## STEP 13 Web Prototype Behavior
+
+- Desktop preview uses one controlled opening sequence: a 4.8 s poster settle and staggered copy/stage reveal.
+- The sequence runs once only. It has no autoplay audio, loop, mandatory intro or scroll interaction.
+- Navigation and the Stones CTA remain immediately available while the sequence runs.
+- `prefers-reduced-motion` receives the same static disclosed poster without the sequence.
+- This is timing and hierarchy validation only; it is not a replacement for the approved six-shot cinematic asset sequence.
+
 ## Production Gate
 
 Before any shot is integrated into production, register its master and derivative in `docs/ASSETS.md`, record provenance and rights, set usage_rights to OWNED or PERMITTED, and obtain explicit production approval. No stock, generated or inferred quarry scene may be presented as HAMMARBLE documentary footage.
