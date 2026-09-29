@@ -27,6 +27,39 @@ Purpose: define the controlled cinematic sequence after the STEP 13 web prototyp
 - `prefers-reduced-motion` receives the same static disclosed poster without the sequence.
 - This is timing and hierarchy validation only; it is not a replacement for the approved six-shot cinematic asset sequence.
 
+## STEP 14 Generation Brief
+
+Status: READY FOR CONTROLLED GENERATION — the brief is approved for Preview-only experimentation. Generated output remains AI-GENERATED and cannot be described as HAMMARBLE documentary material.
+
+### Single Direction
+
+Raw Premium / Industrial Elegance / Quarry First. Natural mineral texture, restrained camera movement, muted earth tones and real-world scale. No slogan, no shattered stone, no glossy CGI look, no glowing effects and no invented site identifiers.
+
+### Controlled Variants
+
+Generate no more than three complete sequence variants from this one direction, then select one sequence winner before integration. Keep shot order, duration range and transitions consistent so the comparison tests cinematic quality rather than a different concept.
+
+| Variant | Controlled change | Fixed constraints |
+| --- | --- | --- |
+| A — Grounded | Softer dawn-like ambient light and slower camera movement | Six-shot order, no people, no site identifier, no slogan, no breakage |
+| B — Mineral | Neutral overcast light with stronger stone surface detail | Six-shot order, no people, no site identifier, no slogan, no breakage |
+| C — Monolithic | Lower-contrast late-day ambient light and slightly wider framing | Six-shot order, no people, no site identifier, no slogan, no breakage |
+
+### Shot References
+
+| Shot | Reference input | Generation instruction |
+| --- | --- | --- |
+| 01 — Source | The registered Preview-only quarry concept poster; composition reference only | Wide aerial-style mineral mass. Slow forward drift. Do not infer a real HAMMARBLE site. |
+| 02 — Approach | Shot 01 end frame | Continue toward a stepped stone face with a match cut on a rock edge. |
+| 03 — Extraction | Shot 02 end frame | Stable medium composition: intact mother rock becomes a separated block without impact, debris burst or shattering. |
+| 04 — Movement | Shot 03 end frame | Low wide tracking composition around a single block in controlled movement; no branded equipment or implied site operations. |
+| 05 — Pause | Shot 04 end frame | Quiet, mostly static mineral space after movement exits; restrained naturally settling dust only. |
+| 06 — HAMMARBLE | Code-native wordmark treatment, not generated text | Near-black mineral field ending cleanly before the HTML logo treatment. No generated logo or slogan. |
+
+### Candidate Register
+
+Before selecting a winner, add each generated candidate to `docs/ASSETS.md` with its provider, creation date, source prompt/reference, rights evidence, visible AI-GENERATED label and Preview-only status. Do not integrate a candidate until that entry exists.
+
 ## Production Gate
 
 Before any shot is integrated into production, register its master and derivative in `docs/ASSETS.md`, record provenance and rights, set usage_rights to OWNED or PERMITTED, and obtain explicit production approval. No stock, generated or inferred quarry scene may be presented as HAMMARBLE documentary footage.
