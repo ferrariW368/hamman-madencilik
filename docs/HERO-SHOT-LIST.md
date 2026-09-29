@@ -22,10 +22,10 @@ Purpose: define the controlled cinematic sequence after the STEP 13 web prototyp
 
 ## STEP 13 Web Prototype Behavior
 
-- Desktop Preview uses the selected 5.0 s muted approach shot behind the existing staggered copy/stage reveal.
+- Desktop Preview uses the selected 5.0 s muted approach shot as a full-bleed opening field, with minimal copy layered over it.
 - Tablet and mobile use the static poster; the video is intentionally withheld to protect field performance.
 - Playback failure and `prefers-reduced-motion` use the matching first-frame static disclosed poster, avoiding a scene change when motion starts.
-- Copy/stage reveal runs once only. The muted 5.0 s motion layer may loop; it has no mandatory intro or scroll interaction.
+- Copy reveal runs once only. The muted 5.0 s motion layer may loop; normal page scrolling remains fully available and is never captured or forced.
 - Navigation and the Stones CTA remain immediately available while the sequence runs.
 - `prefers-reduced-motion` receives the same static disclosed poster without the sequence.
 - This is timing and hierarchy validation only; it is not a replacement for the approved six-shot cinematic asset sequence.

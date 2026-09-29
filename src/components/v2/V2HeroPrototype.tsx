@@ -5,30 +5,24 @@ import { Container } from "./Container";
 import { V2HeroMedia } from "./V2HeroMedia";
 
 export function V2HeroPrototype({ locale, title, content }: Readonly<{ locale: PublishedLocale; title: string; content: Messages["heroPrototype"] }>) {
-  return <section className="v2-hero border-b border-[color:var(--color-foundation-border)] bg-[color:var(--color-foundation-ink)] text-[color:var(--color-foundation-canvas)]" aria-labelledby="v2-hero-title">
-    <Container className="grid min-h-[34rem] items-end gap-10 py-12 md:min-h-[42rem] md:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)] md:py-16">
-      <div className="relative overflow-hidden border border-white/20 bg-[#3a372e] p-6 md:p-10">
-        <V2HeroMedia alt={content.imageAlt} />
-        <div className="v2-hero__scrim absolute inset-0 bg-black/30" aria-hidden="true" />
-        <div className="relative flex min-h-[25rem] flex-col justify-between md:min-h-[31rem]">
-          <p className="v2-hero__eyebrow text-xs font-medium tracking-[0.14em] text-white/70">{content.eyebrow}</p>
-          <div className="v2-hero__identity">
-            <p className="text-xs tracking-[0.12em] text-white/70">{content.status}</p>
-            <p className="mt-2 max-w-xs text-[0.65rem] leading-4 tracking-[0.08em] text-white/60">{content.imageDisclosure}</p>
-            <h1 id="v2-hero-title" className="mt-4 font-[family-name:var(--font-display)] text-[clamp(2.25rem,4.6vw,4.25rem)] leading-none tracking-[0.08em]">{title}</h1>
-          </div>
-        </div>
+  return <section className="v2-hero relative isolate min-h-[calc(100svh-5rem)] overflow-hidden bg-[color:var(--color-foundation-ink)] text-white" aria-labelledby="v2-hero-title">
+    <V2HeroMedia alt={content.imageAlt} />
+    <div className="v2-hero__scrim absolute inset-0" aria-hidden="true" />
+    <Container className="relative flex min-h-[calc(100svh-5rem)] flex-col justify-between py-8 md:py-12">
+      <div className="flex items-start justify-between gap-6">
+        <p className="v2-hero__eyebrow text-xs font-medium tracking-[0.16em] text-white/75">{content.eyebrow}</p>
+        <p className="v2-hero__disclosure max-w-56 text-end text-[0.62rem] leading-4 tracking-[0.08em] text-white/60">{content.imageDisclosure}</p>
       </div>
 
-      <div className="v2-hero__copy pb-1 md:pb-6">
-        <p className="max-w-md text-base leading-7 text-white/75">{content.description}</p>
+      <div className="v2-hero__identity max-w-2xl pb-[clamp(2rem,8vh,6rem)]">
+        <p className="text-xs tracking-[0.12em] text-white/70">{content.status}</p>
+        <h1 id="v2-hero-title" className="mt-4 font-[family-name:var(--font-display)] text-[clamp(3.5rem,11vw,9rem)] leading-[0.82] tracking-[0.08em]">{title}</h1>
+        <p className="v2-hero__copy mt-8 max-w-md text-base leading-7 text-white/80 md:text-lg">{content.description}</p>
         <Link href={`/${locale}/stones`} className="v2-hero__cta mt-8 inline-flex min-h-11 items-center border-b border-white px-1 text-xs font-medium tracking-[0.1em] text-white hover:text-[#d7c79f]">{content.exploreStones}</Link>
-        <ol className="mt-12 grid grid-cols-2 border-t border-white/20 sm:grid-cols-3" aria-label={content.eyebrow}>
-          {content.stages.map((stage) => <li key={stage.label} className="v2-hero__stage border-b border-e border-white/20 p-3 last:border-e-0 sm:[&:nth-child(3n)]:border-e-0">
-            <span className="block text-[0.65rem] tracking-[0.14em] text-white/55">{stage.label}</span>
-            <span className="mt-2 block text-xs tracking-[0.08em]">{stage.title}</span>
-          </li>)}
-        </ol>
+      </div>
+
+      <div className="v2-hero__scroll-cue flex items-center gap-3 border-t border-white/30 pt-4 text-[0.62rem] tracking-[0.16em] text-white/65" aria-hidden="true">
+        <span>01</span><span className="h-px w-10 bg-white/50" /><span>↓</span>
       </div>
     </Container>
   </section>;

@@ -10,7 +10,7 @@ export function V2HeroMedia({ alt }: Readonly<{ alt: string }>) {
   const [videoAvailable, setVideoAvailable] = useState(true);
 
   return <>
-    <Image src={posterSource} alt={alt} fill priority sizes="(min-width: 1024px) 55vw, 100vw" className="v2-hero__poster object-cover opacity-70" />
+    <Image src={posterSource} alt={alt} fill priority sizes="100vw" className="v2-hero__poster object-cover" />
     {videoAvailable ? <video className="v2-hero__video" autoPlay muted loop playsInline preload="metadata" poster={posterSource} aria-hidden="true" onError={() => setVideoAvailable(false)}>
       <source src={videoSource} type="video/mp4" />
     </video> : null}
