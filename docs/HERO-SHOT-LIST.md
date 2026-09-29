@@ -17,14 +17,14 @@ Purpose: define the controlled cinematic sequence after the STEP 13 web prototyp
 
 | File | Role | Class | Restriction |
 | --- | --- | --- | --- |
-| public/media/ai/ai-hero-quarry-concept-01.png | Static poster behind the Hero copy | AI-GENERATED | Preview-only, visible disclosure required, not a HAMMARBLE quarry or stone, not for production |
-| public/media/ai/ai-hero-quarry-approach-02.mp4 | Desktop Hero motion layer; static poster remains on tablet/mobile, reduced motion or playback failure | AI-GENERATED | Preview-only, muted, visible disclosure required, not documentary quarry footage, not for production |
+| public/media/ai/ai-hero-quarry-approach-02-poster.jpg | First-frame poster behind the Hero copy | AI-GENERATED | Preview-only, visible disclosure required, matches the selected motion layer, not documentary quarry footage, not for production |
+| public/media/ai/ai-hero-quarry-approach-02.mp4 | Desktop Hero motion layer; matching static poster remains on tablet/mobile, reduced motion or playback failure | AI-GENERATED | Preview-only, muted, visible disclosure required, not documentary quarry footage, not for production |
 
 ## STEP 13 Web Prototype Behavior
 
 - Desktop Preview uses the selected 5.0 s muted approach shot behind the existing staggered copy/stage reveal.
 - Tablet and mobile use the static poster; the video is intentionally withheld to protect field performance.
-- Playback failure and `prefers-reduced-motion` use the same static disclosed poster.
+- Playback failure and `prefers-reduced-motion` use the matching first-frame static disclosed poster, avoiding a scene change when motion starts.
 - Copy/stage reveal runs once only. The muted 5.0 s motion layer may loop; it has no mandatory intro or scroll interaction.
 - Navigation and the Stones CTA remain immediately available while the sequence runs.
 - `prefers-reduced-motion` receives the same static disclosed poster without the sequence.

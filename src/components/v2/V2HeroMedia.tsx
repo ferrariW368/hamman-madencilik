@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const posterSource = "/media/ai/ai-hero-quarry-concept-01.png";
+const posterSource = "/media/ai/ai-hero-quarry-approach-02-poster.jpg";
 const videoSource = "/media/ai/ai-hero-quarry-approach-02.mp4";
 
 export function V2HeroMedia({ alt }: Readonly<{ alt: string }>) {

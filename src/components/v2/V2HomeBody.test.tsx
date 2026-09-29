@@ -13,9 +13,9 @@ describe("V2HomeBody", () => {
     expect(screen.getByRole("link", { name: "İletişim alanına git" })).toHaveAttribute("href", "/tr/contact");
     expect(screen.getByText("DEMO — doğrulanmış şirket görüntüsü kullanılmıyor")).toBeInTheDocument();
     expect(screen.getByText("AI-GENERATED konsept görsel — HAMMARBLE ocağını temsil etmez")).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: "Yapay zekâ ile üretilmiş taş ocağı konsept görseli" })).toHaveAttribute("src", expect.stringContaining("ai-hero-quarry-concept-01.png"));
+    expect(screen.getByRole("img", { name: "Yapay zekâ ile üretilmiş taş ocağı konsept görseli" })).toHaveAttribute("src", expect.stringContaining("ai-hero-quarry-approach-02-poster.jpg"));
     const video = document.querySelector("video");
-    expect(video).toHaveAttribute("poster", "/media/ai/ai-hero-quarry-concept-01.png");
+    expect(video).toHaveAttribute("poster", "/media/ai/ai-hero-quarry-approach-02-poster.jpg");
     expect(video?.querySelector("source")).toHaveAttribute("src", "/media/ai/ai-hero-quarry-approach-02.mp4");
   });
 });

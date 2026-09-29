@@ -245,7 +245,7 @@ Status: PENDING — selected for Preview-only V2 Hero integration; not approved 
 - rights_source / evidence: no provider publication-rights evidence has been recorded in the repository
 - approval status: PENDING for publication; selected by project owner for Preview-only Hero integration, 2026-09-30
 - master location: higgsfield/hf_20260929_141939_b2833fbd-6bf4-4d59-bfcd-eb008c1d0797.mp4
-- web derivative: public/media/ai/ai-hero-quarry-approach-02.mp4 (H.264, 5.04 s, 1920×1080, no audio, SHA-256 7F792233057AEA2DD001E27FD1AF0F777C0B3779ADACF3AA6A7B2890DE710013)
+- web derivatives: public/media/ai/ai-hero-quarry-approach-02.mp4 (H.264, 5.04 s, 1920×1080, no audio, SHA-256 7F792233057AEA2DD001E27FD1AF0F777C0B3779ADACF3AA6A7B2890DE710013); public/media/ai/ai-hero-quarry-approach-02-poster.jpg (first-frame fallback)
 - used in: STEP 15 V2 Preview desktop Hero only
 - restrictions: retain visible AI-GENERATED disclosure; use static poster on tablet/mobile, reduced motion or playback failure; do not present as documentary quarry footage or deploy to production before rights and production approval are verified
 
