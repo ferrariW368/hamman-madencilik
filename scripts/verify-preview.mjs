@@ -60,11 +60,11 @@ const routes = [
   { path: "/", status: 307, headers: [["Location is /tr", (headers) => /^location:\s*\/tr\s*$/im.test(headers)]] },
   {
     ...localized("tr", "/tr", "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor"),
-    checks: [...localized("tr", "/tr", "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor").checks, ["AI hero disclosure is rendered", (html) => html.includes("AI-GENERATED konsept görsel — HAMMARBLE ocağını temsil etmez")], ["hero does not imply verified footage", (html) => !html.includes("<video")]],
+    checks: [...localized("tr", "/tr", "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor").checks, ["AI hero disclosure is rendered", (html) => html.includes("AI-GENERATED konsept görsel — HAMMARBLE ocağını temsil etmez")], ["selected Preview-only hero video is rendered", (html) => html.includes('src="/media/ai/ai-hero-quarry-approach-02.mp4"')]],
   },
   {
     ...localized("en", "/en", "DEMO — no verified company footage is in use"),
-    checks: [...localized("en", "/en", "DEMO — no verified company footage is in use").checks, ["AI hero disclosure is rendered", (html) => html.includes("AI-GENERATED concept visual — does not represent a HAMMARBLE quarry")], ["hero does not imply verified footage", (html) => !html.includes("<video")]],
+    checks: [...localized("en", "/en", "DEMO — no verified company footage is in use").checks, ["AI hero disclosure is rendered", (html) => html.includes("AI-GENERATED concept visual — does not represent a HAMMARBLE quarry")], ["selected Preview-only hero video is rendered", (html) => html.includes('src="/media/ai/ai-hero-quarry-approach-02.mp4"')]],
   },
   {
     ...localized("tr", "/tr/quarries", "Ocak bilgileri doğrulanmış konum ve malzeme ilişkileri ile eklenecektir."),

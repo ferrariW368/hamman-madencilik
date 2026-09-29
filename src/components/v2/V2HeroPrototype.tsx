@@ -1,14 +1,14 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { PublishedLocale } from "@/i18n/config";
 import type { Messages } from "@/i18n/messages";
 import { Container } from "./Container";
+import { V2HeroMedia } from "./V2HeroMedia";
 
 export function V2HeroPrototype({ locale, title, content }: Readonly<{ locale: PublishedLocale; title: string; content: Messages["heroPrototype"] }>) {
   return <section className="v2-hero border-b border-[color:var(--color-foundation-border)] bg-[color:var(--color-foundation-ink)] text-[color:var(--color-foundation-canvas)]" aria-labelledby="v2-hero-title">
     <Container className="grid min-h-[34rem] items-end gap-10 py-12 md:min-h-[42rem] md:grid-cols-[minmax(0,1fr)_minmax(20rem,0.8fr)] md:py-16">
       <div className="relative overflow-hidden border border-white/20 bg-[#3a372e] p-6 md:p-10">
-        <Image src="/media/ai/ai-hero-quarry-concept-01.png" alt={content.imageAlt} fill priority sizes="(min-width: 768px) 55vw, 100vw" className="v2-hero__poster object-cover opacity-70" />
+        <V2HeroMedia alt={content.imageAlt} />
         <div className="v2-hero__scrim absolute inset-0 bg-black/30" aria-hidden="true" />
         <div className="relative flex min-h-[25rem] flex-col justify-between md:min-h-[31rem]">
           <p className="v2-hero__eyebrow text-xs font-medium tracking-[0.14em] text-white/70">{content.eyebrow}</p>

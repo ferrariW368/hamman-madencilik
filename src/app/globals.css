@@ -94,6 +94,15 @@ button {
   transform-origin: 52% 48%;
 }
 
+.v2-hero__video {
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  opacity: 0.7;
+  position: absolute;
+  width: 100%;
+}
+
 .v2-hero__scrim {
   animation: v2-hero-scrim-settle 1.2s ease-out both;
 }
@@ -128,6 +137,12 @@ button {
   transform: translateX(0.2rem);
 }
 
+@media (max-width: 1023px) {
+  .v2-hero__video {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -136,5 +151,9 @@ button {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .v2-hero__video {
+    display: none;
   }
 }

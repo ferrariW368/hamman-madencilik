@@ -7,7 +7,7 @@ Purpose: define the controlled cinematic sequence after the STEP 13 web prototyp
 | Shot | Purpose | Target duration | Framing / camera | Transition | Start → end frame | Asset status |
 | --- | --- | --- | --- | --- | --- | --- |
 | 01 — Source | Establish material scale | 2.0 s | Wide aerial-style quarry abstraction; slow forward drift | Fade from black | Distant rock mass → closer source face | PENDING; no company footage supplied |
-| 02 — Approach | Move toward extraction context | 1.8 s | Medium-wide forward movement along stepped stone | Match cut on rock edge | Broad ledge → tighter stone face | PENDING; no company footage supplied |
+| 02 — Approach | Move toward extraction context | 5.0 s | Medium-wide forward movement toward a stepped stone face | Continuous start/end (single Preview shot) | Broad ledge → tighter stone face | SELECTED for Preview-only integration; AI-GENERATED, visible disclosure required |
 | 03 — Extraction | Show separation without breakage | 2.0 s | Stable medium framing; restrained lateral movement | Hard cut | Intact mother rock → separated block, no impact | PENDING; no company footage supplied |
 | 04 — Movement | Show mass and handling | 2.0 s | Low, wide tracking frame; equipment only if authentic/registered | Cut on direction | Resting block → controlled movement | PENDING; no company footage supplied |
 | 05 — Pause | Create a quiet transition | 1.6 s | Static wide frame; dust settles naturally | Dissolve | Movement exits → empty mineral space | PENDING; no company footage supplied |
@@ -18,11 +18,14 @@ Purpose: define the controlled cinematic sequence after the STEP 13 web prototyp
 | File | Role | Class | Restriction |
 | --- | --- | --- | --- |
 | public/media/ai/ai-hero-quarry-concept-01.png | Static poster behind the Hero copy | AI-GENERATED | Preview-only, visible disclosure required, not a HAMMARBLE quarry or stone, not for production |
+| public/media/ai/ai-hero-quarry-approach-02.mp4 | Desktop Hero motion layer; static poster remains on tablet/mobile, reduced motion or playback failure | AI-GENERATED | Preview-only, muted, visible disclosure required, not documentary quarry footage, not for production |
 
 ## STEP 13 Web Prototype Behavior
 
-- Desktop preview uses one controlled opening sequence: a 4.8 s poster settle and staggered copy/stage reveal.
-- The sequence runs once only. It has no autoplay audio, loop, mandatory intro or scroll interaction.
+- Desktop Preview uses the selected 5.0 s muted approach shot behind the existing staggered copy/stage reveal.
+- Tablet and mobile use the static poster; the video is intentionally withheld to protect field performance.
+- Playback failure and `prefers-reduced-motion` use the same static disclosed poster.
+- Copy/stage reveal runs once only. The muted 5.0 s motion layer may loop; it has no mandatory intro or scroll interaction.
 - Navigation and the Stones CTA remain immediately available while the sequence runs.
 - `prefers-reduced-motion` receives the same static disclosed poster without the sequence.
 - This is timing and hierarchy validation only; it is not a replacement for the approved six-shot cinematic asset sequence.

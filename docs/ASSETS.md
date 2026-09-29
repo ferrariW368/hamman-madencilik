@@ -232,19 +232,22 @@ Status: APPROVED — permitted visual reference for AI-assisted Hero development
 
 ### HAMMARBLE Hero Shot 02 — Higgsfield Cinema Studio
 
-Status: PREVIEW ONLY — AI-GENERATED cinematic derivative; not yet integrated into V2.
+Status: PENDING — selected for Preview-only V2 Hero integration; not approved for production.
 
-\\- asset_id: b2833fbd-6bf4-4d59-bfcd-eb008c1d0797
-\\- subject: restrained approach shot over pale stepped quarry faces
-\\- source: Higgsfield Cinema Studio 4.0, generated 2026-09-29
-\\- input_reference: HAMMARBLE Quarry Reference — user supplied 2026-09-29
-\\- provenance notes: generated from the approved original quarry reference; prompt explicitly excludes readable signage, warnings, vehicles, containers, logos and operational claims
-\\- usage_rights: platform-generated preview; final publication approval pending
-\\- approval status: PENDING for publication; APPROVED for STEP 14 review only
-\\- master location: C:\\\\Users\\\\muham\\\\Downloads\\\\af68696c-f3d2-4320-ae5d-4df5cc8b197c.tmp
-\\- format: 5s video, 1080p, 16:9, sound Off
-\\- used in: STEP 14 cinematic Hero variant review; not embedded in V2
-\\- restrictions: retain visible AI-GENERATED disclosure if published; do not present as documentary quarry footage or use before final asset approval
+- filename: ai-hero-quarry-approach-02.mp4
+- asset_id: b2833fbd-6bf4-4d59-bfcd-eb008c1d0797
+- subject: restrained approach shot over pale stepped quarry faces
+- class: AI-GENERATED
+- source: Higgsfield Cinema Studio 4.0, generated 2026-09-29
+- input_reference: HAMMARBLE Quarry Reference — user supplied 2026-09-29
+- provenance notes: generated from the approved original quarry reference; prompt explicitly excludes readable signage, warnings, vehicles, containers, logos and operational claims
+- usage_rights: UNKNOWN
+- rights_source / evidence: no provider publication-rights evidence has been recorded in the repository
+- approval status: PENDING for publication; selected by project owner for Preview-only Hero integration, 2026-09-30
+- master location: higgsfield/hf_20260929_141939_b2833fbd-6bf4-4d59-bfcd-eb008c1d0797.mp4
+- web derivative: public/media/ai/ai-hero-quarry-approach-02.mp4 (H.264, 5.04 s, 1920×1080, no audio, SHA-256 7F792233057AEA2DD001E27FD1AF0F777C0B3779ADACF3AA6A7B2890DE710013)
+- used in: STEP 15 V2 Preview desktop Hero only
+- restrictions: retain visible AI-GENERATED disclosure; use static poster on tablet/mobile, reduced motion or playback failure; do not present as documentary quarry footage or deploy to production before rights and production approval are verified
 
 ### Spider
 
