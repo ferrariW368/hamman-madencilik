@@ -10,7 +10,8 @@
     "test:watch": "vitest",
     "verify:preview": "node scripts/verify-preview.mjs",
     "preview:deploy:verify": "node scripts/verify-preview.mjs --deploy",
-    "seed": "tsx scripts/seed-content.ts"
+    "seed": "tsx scripts/seed-content.ts",
+    "lighthouse:mobile": "node scripts/measure-lighthouse.mjs"
   },
   "dependencies": {
     "next": "^15.1.0",
@@ -33,6 +34,7 @@
     "@testing-library/react": "^16.0.0",
     "@testing-library/jest-dom": "^6.5.0",
     "jsdom": "^25.0.0",
+    "lighthouse": "^13.5.0",
     "tsx": "^4.19.0",
     "@sanity/client": "^6.24.0",
     "dotenv": "^16.4.0"
