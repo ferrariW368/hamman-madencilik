@@ -230,6 +230,22 @@ Status: APPROVED — permitted visual reference for AI-assisted Hero development
 
 
 
+### HAMMARBLE Hero Shot 02 — Higgsfield Cinema Studio
+
+Status: PREVIEW ONLY — AI-GENERATED cinematic derivative; not yet integrated into V2.
+
+\\- asset_id: b2833fbd-6bf4-4d59-bfcd-eb008c1d0797
+\\- subject: restrained approach shot over pale stepped quarry faces
+\\- source: Higgsfield Cinema Studio 4.0, generated 2026-09-29
+\\- input_reference: HAMMARBLE Quarry Reference — user supplied 2026-09-29
+\\- provenance notes: generated from the approved original quarry reference; prompt explicitly excludes readable signage, warnings, vehicles, containers, logos and operational claims
+\\- usage_rights: platform-generated preview; final publication approval pending
+\\- approval status: PENDING for publication; APPROVED for STEP 14 review only
+\\- master location: C:\\\\Users\\\\muham\\\\Downloads\\\\af68696c-f3d2-4320-ae5d-4df5cc8b197c.tmp
+\\- format: 5s video, 1080p, 16:9, sound Off
+\\- used in: STEP 14 cinematic Hero variant review; not embedded in V2
+\\- restrictions: retain visible AI-GENERATED disclosure if published; do not present as documentary quarry footage or use before final asset approval
+
 ### Spider
 
 
