@@ -225,7 +225,8 @@ Status: APPROVED — permitted visual reference for AI-assisted Hero development
 \- approval status: APPROVED for reference and publication
 \- SHA-256: EEFCA14C020027E53FEC5AA34E43711CEA430346BE45E62CCD11C8518A8911D4
 \- master location: C:\\Users\\muham\\AppData\\Local\\Temp\\codex-clipboard-4af48dd2-c6ed-4be4-b9f5-f1498c3df179.png
-\- used in: STEP 14 cinematic Hero reference input; not yet embedded in V2
+\- web derivative: public/media/reference/quarry-overview-cropped.jpg (1600×680 top crop; excludes readable lower-edge site markings)
+\- used in: STEP 14 cinematic Hero reference input; Preview mobile Hero fallback
 \- restrictions: use for visual continuity only. Do not reproduce readable site text, warnings, vehicle/company marks, or any unverified operational claim in generated media.
 
 

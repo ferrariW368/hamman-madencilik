@@ -6,12 +6,13 @@ import { V2HeroMedia } from "./V2HeroMedia";
 
 export function V2HeroPrototype({ locale, title, content }: Readonly<{ locale: PublishedLocale; title: string; content: Messages["heroPrototype"] }>) {
   return <section className="v2-hero relative isolate min-h-[calc(100svh-5rem)] overflow-hidden bg-[color:var(--color-foundation-ink)] text-white" aria-labelledby="v2-hero-title">
-    <V2HeroMedia alt={content.imageAlt} />
+    <V2HeroMedia alt={content.imageAlt} mobileAlt={content.mobileImageAlt} />
     <div className="v2-hero__scrim absolute inset-0" aria-hidden="true" />
     <Container className="relative flex min-h-[calc(100svh-5rem)] flex-col justify-between py-8 md:py-12">
       <div className="flex items-start justify-between gap-6">
         <p className="v2-hero__eyebrow text-xs font-medium tracking-[0.16em] text-white/75">{content.eyebrow}</p>
-        <p className="v2-hero__disclosure max-w-56 text-end text-[0.62rem] leading-4 tracking-[0.08em] text-white/60">{content.imageDisclosure}</p>
+        <p className="v2-hero__disclosure v2-hero__disclosure--ai max-w-56 text-end text-[0.62rem] leading-4 tracking-[0.08em] text-white/60">{content.imageDisclosure}</p>
+        <p className="v2-hero__disclosure v2-hero__disclosure--mobile max-w-56 text-end text-[0.62rem] leading-4 tracking-[0.08em] text-white/70">{content.mobileImageDisclosure}</p>
       </div>
 
       <div className="v2-hero__identity max-w-2xl pb-[clamp(2rem,8vh,6rem)]">

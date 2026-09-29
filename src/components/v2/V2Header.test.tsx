@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { getMessages } from "@/i18n/messages";
 import { V2Header } from "./V2Header";
@@ -19,5 +19,15 @@ describe("V2Header", () => {
   it("preserves the current route when switching language", () => {
     render(<V2Header locale="tr" messages={getMessages("tr").foundation} />);
     expect(screen.getByRole("link", { name: "Dil: English" })).toHaveAttribute("href", "/en/stones/spider");
+  });
+
+  it("opens the mobile menu with a readable touch target", () => {
+    render(<V2Header locale="tr" messages={getMessages("tr").foundation} />);
+    const menu = screen.getByRole("button", { name: "Menüyü aç" });
+    expect(menu).toHaveClass("min-h-12");
+    expect(menu).toHaveClass("min-w-24");
+    fireEvent.click(menu);
+    expect(menu).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: "İletişim" })).toHaveAttribute("href", "/tr/contact");
   });
 });

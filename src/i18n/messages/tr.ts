@@ -29,7 +29,9 @@ export const trHeroPrototype: Messages["heroPrototype"] = {
   description: "Sinematik açılışın medya bağımsız prototipi. Onaylı kaynak görüntüleri geldiğinde bu yapı gerçek görüntülerle güncellenecektir.",
   status: "DEMO — doğrulanmış şirket görüntüsü kullanılmıyor",
   imageDisclosure: "AI-GENERATED konsept görsel — HAMMARBLE ocağını temsil etmez",
+  mobileImageDisclosure: "MOBİL REFERANS — proje sahibinin izin verdiği gerçek ocak fotoğrafı",
   imageAlt: "Yapay zekâ ile üretilmiş taş ocağı konsept görseli",
+  mobileImageAlt: "HAMMARBLE ocak genel görünüm referans fotoğrafı",
   exploreStones: "Taş alanını aç",
   stages: [
     { label: "01", title: "Kaynak" },

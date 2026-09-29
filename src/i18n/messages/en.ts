@@ -29,7 +29,9 @@ export const enHeroPrototype: Messages["heroPrototype"] = {
   description: "A media-independent prototype for the cinematic opening. This structure will be updated with approved source footage when it is available.",
   status: "DEMO — no verified company footage is in use",
   imageDisclosure: "AI-GENERATED concept visual — does not represent a HAMMARBLE quarry",
+  mobileImageDisclosure: "MOBILE REFERENCE — original quarry photo permitted by the project owner",
   imageAlt: "AI-generated quarry concept visual",
+  mobileImageAlt: "HAMMARBLE quarry overview reference photo",
   exploreStones: "Open stones",
   stages: [
     { label: "01", title: "Source" },

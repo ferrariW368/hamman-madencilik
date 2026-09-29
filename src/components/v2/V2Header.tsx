@@ -17,12 +17,18 @@ export function V2Header({ locale, messages }: Readonly<{ locale: PublishedLocal
   const alternatePath = pathname.replace(/^\/(tr|en)(?=\/|$)/, `/${alternateLocale}`);
 
   return (
-    <header className="border-b border-[color:var(--color-foundation-border)] bg-[color:var(--color-foundation-canvas)]">
+    <header className="relative z-30 border-b border-[color:var(--color-foundation-border)] bg-[color:var(--color-foundation-canvas)]">
       <Container className="flex min-h-20 items-center justify-between gap-4">
         <Link href={`/${locale}`} className="font-[family-name:var(--font-display)] text-xl tracking-[0.12em] text-[color:var(--color-foundation-ink)]" onClick={() => setIsOpen(false)}>HAMMARBLE</Link>
         <div className="flex items-center gap-2 md:order-3">
           <Link href={alternatePath} lang={alternateLocale} className="inline-flex min-h-11 items-center border border-[color:var(--color-foundation-border)] px-3 text-xs font-medium tracking-[0.08em] text-[color:var(--color-foundation-ink)] hover:border-[color:var(--color-foundation-accent)]" aria-label={`${messages.languageLabel}: ${messages.localeNames[alternateLocale]}`}>{messages.localeNames[alternateLocale]}</Link>
-          <button type="button" className="inline-flex min-h-11 min-w-11 items-center justify-center border border-[color:var(--color-foundation-border)] text-xs font-medium tracking-[0.08em] text-[color:var(--color-foundation-ink)] md:hidden" aria-expanded={isOpen} aria-controls="v2-primary-navigation" aria-label={isOpen ? messages.closeMenuLabel : messages.openMenuLabel} onClick={() => setIsOpen((open) => !open)}>{isOpen ? "×" : "MENU"}</button>
+          <button type="button" className="inline-flex min-h-12 min-w-24 items-center justify-center gap-2 border border-[color:var(--color-foundation-border)] px-4 text-sm font-medium tracking-[0.08em] text-[color:var(--color-foundation-ink)] md:hidden" aria-expanded={isOpen} aria-controls="v2-primary-navigation" aria-label={isOpen ? messages.closeMenuLabel : messages.openMenuLabel} onClick={() => setIsOpen((open) => !open)}>
+            <span aria-hidden="true" className="flex flex-col gap-1">
+              <span className="h-px w-4 bg-current" />
+              <span className="h-px w-4 bg-current" />
+            </span>
+            <span>{isOpen ? "CLOSE" : "MENU"}</span>
+          </button>
         </div>
         <nav id="v2-primary-navigation" aria-label={messages.navigationLabel} className={cn("absolute inset-x-0 top-20 z-10 border-b border-[color:var(--color-foundation-border)] bg-[color:var(--color-foundation-surface)] md:static md:block md:border-0 md:bg-transparent", isOpen ? "block" : "hidden md:block")}>
           <Container className="py-4 md:px-0 md:py-0">

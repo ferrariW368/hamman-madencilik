@@ -94,6 +94,16 @@ button {
   transform-origin: 52% 48%;
 }
 
+.v2-hero__media {
+  transform: translate3d(0, var(--hero-parallax, 0px), 0) scale(1.04);
+  will-change: transform;
+}
+
+.v2-hero__poster--mobile,
+.v2-hero__disclosure--mobile {
+  display: none;
+}
+
 .v2-hero__video {
   height: 100%;
   inset: 0;
@@ -140,6 +150,16 @@ button {
 @media (max-width: 1023px) {
   .v2-hero__video {
     display: none;
+  }
+
+  .v2-hero__poster--ai,
+  .v2-hero__disclosure--ai {
+    display: none;
+  }
+
+  .v2-hero__poster--mobile,
+  .v2-hero__disclosure--mobile {
+    display: block;
   }
 }
 

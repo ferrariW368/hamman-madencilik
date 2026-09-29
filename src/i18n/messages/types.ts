@@ -28,7 +28,9 @@ export type Messages = {
     description: string;
     status: string;
     imageDisclosure: string;
+    mobileImageDisclosure: string;
     imageAlt: string;
+    mobileImageAlt: string;
     exploreStones: string;
     stages: readonly { label: string; title: string }[];
   };
